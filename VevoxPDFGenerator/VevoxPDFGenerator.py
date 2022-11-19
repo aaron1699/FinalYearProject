@@ -2,12 +2,16 @@
 import sys 
 import json
 import zipfile
-import pdfmake
 import pdfkit
 
+path_wkhtmltopdf = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
+config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
 
 
-zfile = zipfile.ZipFile(sys.argv[1])
+print("This is the name of the script ", sys.argv[0])
+
+filepath = r"C:\Users\Aaron\source\repos\FinalYearProject\VevoxPDFGenerator\poll_week6_v2.zip"
+zfile = zipfile.ZipFile(filepath)
 poll_file = zfile.open('polls.json')
 poll_data = json.load(poll_file)
 
@@ -17,4 +21,4 @@ for question_number, question in enumerate(poll_data):
     html += f"<h2>{question_number} {question['text']}</h2>"
     html += f"<p>{question['text']}</p>"
 
-pdfmake.from_string(html, 'output.pdf')
+pdfkit.from_string(html, 'output.pdf', configuration=config)
