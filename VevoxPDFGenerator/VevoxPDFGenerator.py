@@ -1,17 +1,19 @@
 
-# importing required modules
-from zipfile import ZipFile
+import sys 
+import json
+import zipfile
+import pdfkit
 
-# specifying the zip file name
-user_input_zip = input("Enter/Paste filepath:")
-file_name = user_input_zip
 
-# opening the zip file in READ mode
-with ZipFile(file_name, 'r') as zip:
-	# printing all the contents of the zip file
-	zip.printdir()
+config = pdfkit.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")   
+zfile = zipfile.ZipFile(sys.argv[1])
+poll_file = zfile.open('polls.json')
+poll_data = json.load(poll_file)
 
-	# extracting all the files
-	print('Extracting all the files now...')
-	#zip.extractall()
-	print('Done!')
+html = ''
+for question_number, question in enumerate(poll_data):
+    print(question_number, question['@type'], question['text'])
+    html += f"<h2>{question_number} {question['text']}</h2>"
+    html += f"<p>{question['text']}</p>"
+
+pdfkit.from_string(html, 'output.pdf')
