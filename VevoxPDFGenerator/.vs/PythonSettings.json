@@ -1,3 +1,4 @@
 {
-  "Interpreter": "Global|VisualStudio|Scripts"
+  "Interpreter": "Global|VisualStudio|Scripts",
+  "SuppressConfigureTestFrameworkPrompt": "true"
 }
