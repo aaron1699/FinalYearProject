@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
+    "\\VevoxEditor",
     "\\VevoxPDFGenerator"
   ],
-  "SelectedNode": "\\VevoxPDFGenerator\\VevoxPDFGenerator.py",
+  "SelectedNode": "\\VevoxEditor\\VevoxEditor.py",
   "PreviewInSolutionExplorer": false
 }

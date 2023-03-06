@@ -1,3 +1,4 @@
+from cgitb import html
 import sys 
 import json
 import zipfile
@@ -48,49 +49,167 @@ def findImage(name):
             imagestring = os.path.dirname(os.path.abspath(__file__)) + "\\resources\\" + str(matching[0])
         return imagestring
 
+class MultipleChoiceQuestion:
+    def __init__(self, question):
+        self.question = question
+
+    def to_html(self):
+
+        html = f"<h2>{question_number + 1}) {self.question['text']}</h2>"
+        question_image = findImage(self.question)
+        if self.question['image'] != None:
+            html += f'<img src="{question_image}" style="max-width:{maxWidth}px;max-height:{maxHeight}px;"/>'
+
+        for choices in self.question['choices']:
+                print(choices['text'], choices['isCorrectAnswer'], choices['image'])
+                html += f"<p>{choices['text']} {choices['isCorrectAnswer']}</p>"
+                choices_image = findImage(choices)
+                if choices['image'] != None:
+                    html += f'<img src="{choices_image}" style="max-width:{maxWidth}px;max-height:{maxHeight}px;"/>'
+        if question['correctAnswerExplanation'] != None:
+                html += f"<p>{question['correctAnswerExplanation']}</p>"
+
+        return html
+
+class RankingQuestion:
+    def __init__(self, question):
+        self.question = question
+
+    def to_html(self):
+
+        html = f"<h2>{question_number + 1}) {self.question['text']}</h2>"
+        question_image = findImage(self.question)
+        if self.question['image'] != None:
+            html += f'<img src="{question_image}" style="max-width:{maxWidth}px;max-height:{maxHeight}px;"/>'
+
+        for choices in self.question['choices']:
+            html += f"<p>Rank: {choices['sequence'] + 1} <br> {choices['text']}</p>"
+            choices_image = findImage(choices)
+            if choices['image'] != None:
+                html += f'<img src="{choices_image}" style="max-width:{maxWidth}px;max-height:{maxHeight}px;"/>'
+
+        return html
+
+class ClickMapQuestion:
+    def __init__(self, question):
+        self.question = question
+
+    def to_html(self):
+
+        html = f"<h2>{question_number + 1}) {self.question['text']}</h2>"
+        question_image = findImage(self.question)
+        if self.question['image'] != None:
+            html += f'<img src="{question_image}" style="max-width:{maxWidth}px;max-height:{maxHeight}px;"/>'
+        if len(question['options']) != 0:    
+                html += f"<p>{question['options']}</p>"
+        if len(question['correctAnswers']) != 0:
+                html += f"<p>{question['correctAnswers']}</p>"
+        if question['correctAnswerExplanation'] != None:
+                html += f"<p>{question['correctAnswerExplanation']}</p>"
+
+        return html
+
+class OpenTextQuestion:
+    def __init__(self, question):
+        self.question = question
+
+    def to_html(self):
+
+        html = f"<h2>{question_number + 1}) {self.question['text']}</h2>"
+        question_image = findImage(self.question)
+        if self.question['image'] != None:
+            html += f'<img src="{question_image}" style="max-width:{maxWidth}px;max-height:{maxHeight}px;"/>'
+
+        for answers in self.question['correctAnswers']:
+            html += f"<p>{answers}</p>"
+        if question['correctAnswerExplanation'] != None:
+                html += f"<p>{question['correctAnswerExplanation']}</p>"
+
+        return html
+
+class NumericQuestion:
+    def __init__(self, question):
+        self.question = question
+
+    def to_html(self):
+
+        html = f"<h2>{question_number + 1}) {self.question['text']}</h2>"
+        question_image = findImage(self.question)
+        if self.question['image'] != None:
+            html += f'<img src="{question_image}" style="max-width:{maxWidth}px;max-height:{maxHeight}px;"/>'
+
+        for answers in self.question['correctAnswers']:
+            html += f"<p>Min: {answers['min']} <br> Max: {answers['max']}</p>"
+        if question['correctAnswerExplanation'] != None:
+                html += f"<p>{question['correctAnswerExplanation']}</p>"
+
+        return html
+
+class ScatterPlotQuestion:
+    def __init__(self, question):
+        self.question = question
+
+    def to_html(self):
+
+        question_maxX = question['maxX']
+        question_maxY = question['maxY']
+        question_xText = question['xText']
+        question_yText = question['yText']
+        html = f"<h2>{question_number + 1}) {self.question['text']}</h2>"
+        question_image = findImage(self.question)
+        if self.question['image'] != None:
+            html += f'<img src="{question_image}" style="max-width:{maxWidth}px;max-height:{maxHeight}px;"/>'
+
+        #html += f"<h3>{question['items']}</h3>"
+        html += f'<div style="height: 200px; padding:400px 0px 0px 0px;" <br>'
+        html += f'<div style="position: fixed; left:30px; height: 400px; width:3px; background:black; page-break-inside: avoid;" />'
+        html += f'<h4 style="position: relative; left:-30px; bottom: 20px;">{question_maxY}</h4>'
+        html += f'<h4 style="position: relative; left:-15px; top:150px; -webkit-transform: rotate(270deg); white-space:nowrap;">{question_yText}</h4>'
+        html += f'<div style="position: relative; left:1px; top:295px; height: 3px; width:700px; background:black;" />'
+        html += f'<h4 style="position: relative; left:680px; top:10px;">{question_maxX}</h4>'
+        html += f'<h4 style="position: relative; left:350px; bottom:20px;">{question_xText}</h4>'
+        html += f'<div style="height: 400px; padding:400px 0px 0px 0px;" <br>'
+
+        return html
+
+#ask user how big image is i.e. % of page width
+# add tick/cross
+#title
+
 html = ''
+global maxWidth 
+global maxHeight
+maxWidth = 200
+maxHeight = 200
 
 for question_number, question in enumerate(poll_data):
-    #print(question_number+1, question['@type'], question['text'], question['image'])
-    html += f"<h2>{question['@type']}</h2>"
-    html += f"<h2>{question_number+1} {question['text']} {question['image']}</h2>"
-    question_image = findImage(question)
-    if question['image'] != None:
-           html += f'<img src="{question_image}"/>'
 
     if question['@type'] == "MultipleChoiceQuestion":
-        for choices in question['choices']:
-            print(choices['text'], choices['isCorrectAnswer'], choices['image'])
-            html += f"<h3>{choices['text']} {choices['isCorrectAnswer']} {choices['image']}</h3>"
-            choices_image = findImage(choices)
-            if choices['image'] != None:
-                html += f'<img src="{choices_image}"/>'
-        html += f"<h3>{question['correctAnswerExplanation']}</h3>"
+        MCQ_question = MultipleChoiceQuestion(question)
+        html += MCQ_question.to_html()
 
     if question['@type'] == "ClickMapQuestion":
-        #for options in question['options']:
-        html += f"<h3>{question['options']} {question['correctAnswers']} {question['correctAnswerExplanation']}</h3>"
+        ClickMap_question = ClickMapQuestion(question)
+        html += ClickMap_question.to_html()
 
     if question['@type'] == "OpenTextQuestion":
-        for answers in question['correctAnswers']:
-            html += f"<h3>{answers}</h3>"
-        html += f"<h3>{question['correctAnswerExplanation']}</h3>"
+        OpenText_question = OpenTextQuestion(question)
+        html += OpenText_question.to_html()
 
     if question['@type'] == "RankingQuestion":
-        for choices in question['choices']:
-            html += f"<h3>{choices['sequence']} {choices['text']} {choices['image']}</h3>"
-            choices_image = findImage(choices)
-            if choices['image'] != None:
-                html += f'<img src="{choices_image}"/>'
+        Ranking_question = RankingQuestion(question)
+        html += Ranking_question.to_html()
 
     if question['@type'] == "NumericQuestion":
-        for answers in question['correctAnswers']:
-            html += f"<h3>Min: {answers['min']} <br> Max: {answers['max']}</h3>"
-        html += f"<h3>{question['correctAnswerExplanation']}</h3>"
+        Numeric_question = NumericQuestion(question)
+        html += Numeric_question.to_html()
 
-    #if question['@type'] == "ScatterPlotQuestion":
-    
-#html += f'<img src="C:\\Users\\Aaron\\Downloads\\poll_week6_v2\\resources\\c19cd52c-37fd-4e8f-91dc-e63729c6744a.2871.gif"/>' 
+    if question['@type'] == "ScatterPlotQuestion":
+        ScatterPlot_question = ScatterPlotQuestion(question)
+        html += ScatterPlot_question.to_html()
+
+    html += f'<div style="height: 3px; width:100%; background:black; padding: 20px white;" />'
+    html += f'<div style="height: 20px; width:100%; position: relative; top: 20px" />'
 
 
 file = open('output.html', 'w')
@@ -100,7 +219,6 @@ file.close()
 pdfkit.from_string(html, 'output.pdf', configuration=config, options={"enable-local-file-access": ""})
 
 shutil.rmtree(image_directory)
-
 
 
 #multiplechoice
