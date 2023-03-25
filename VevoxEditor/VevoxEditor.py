@@ -40,17 +40,6 @@ class Window(qtw.QWidget):
 
 		self.answer_here = qtw.QLabel("Enter Choices")
 		layout.addWidget(self.answer_here, 6, 0)
-
-		#self.AnswerInput = qtw.QLineEdit()
-		#layout.addWidget (self.AnswerInput,3 ,1 ,1 , 2)
-
-		#self.addAnswerButton = qtw.QPushButton("Add Answer")
-		#self.addAnswerButton.clicked.connect(self.addAnswer)
-		#layout.addWidget(self.addAnswerButton, 4, 1)
-
-		#self.deleteAnswerButton = qtw.QPushButton("Delete")
-		#self.deleteAnswerButton.clicked.connect (self.deleteAnswer)
-		#layout.addWidget(self.deleteAnswerButton, 4, 2)		
 		
 		
 		self.answerExplanation = qtw.QLabel("Answer Explanation")
@@ -60,15 +49,12 @@ class Window(qtw.QWidget):
 		layout.addWidget (self.answerExplanationInput, 8, 1, 1, 2)
 
 
-		#self.checkBoxListWidget = CheckBoxListWidget()
-		#layout.addWidget(self.checkBoxListWidget, 6, 1, 2, 2)
-		#self.checkBoxListWidget.setSelectionMode(qtw.QAbstractItemView.SingleSelection)
-		#self.checkBoxListWidget.itemDoubleClicked.connect(self.editItem)
 		self.table = qtw.QTableWidget()
 		layout.addWidget(self.table, 6, 1, 2, 6)
 
 		self.table.setRowCount(0) 
-		self.table.setColumnCount(3) 
+		self.table.setColumnCount(4) 
+		self.table.hideColumn(3)
 		self.table.setItem(0,0, qtw.QTableWidgetItem("Name"))
 		header = self.table.horizontalHeader()
 		header.hide()
@@ -77,54 +63,13 @@ class Window(qtw.QWidget):
 		self.deleteAnswerButton.clicked.connect(self.deleteAnswer)
 
 		self.addRowButton = qtw.QPushButton("Add Row")
-		self.addRowButton.clicked.connect(self.addRow)
+		
 		layout.addWidget(self.addRowButton, 4, 1)
 
-		#self.testButton = qtw.QPushButton("Add Row")
-		#self.testButton.clicked.connect(self.test)
-		#layout.addWidget(self.testButton, 5, 1)
-
-		#self.correctAnswerBox = qtw.QListWidget()
-		#layout.addWidget(self.correctAnswerBox, 6, 1, 2, 2)
-
-		#self.minTextLabel = qtw.QLabel("Min: ")
-		#layout.addWidget(self.minTextLabel, 5, 0)
-
-		#self.minTextInput = qtw.QLineEdit()
-		#layout.addWidget (self.minTextInput, 5, 1, 1, 1)
-
-		#self.maxTextLabel = qtw.QLabel("Max: ")
-		#layout.addWidget(self.maxTextLabel, 5, 0)
-
-		#self.maxTextInput = qtw.QLineEdit()
-		#layout.addWidget (self.maxTextInput, 5, 1, 1, 1)
-
-		#self.horizontalXLabel = qtw.QLabel("Horizontal (x axis): ")
-		#layout.addWidget(self.horizontalXLabel, 5, 0)
-
-		#self.horizontalXInput = qtw.QLineEdit()
-		#layout.addWidget (self.horizontalXInput, 5, 1, 1, 1)
-
-		#self.verticalYLabel = qtw.QLabel("Vertical (y axis): ")
-		#layout.addWidget(self.verticalYLabel, 5, 0)
-
-		#self.verticalYLabelInput = qtw.QLineEdit()
-		#layout.addWidget (self.verticalYLabelInput, 5, 1, 1, 1)
-
-		#self.XYMax = qtw.QLabel("Max Value: ")
-		#layout.addWidget(self.XYMax, 5, 0)
-
-		#self.XYMaxInput = qtw.QLineEdit()
-		#layout.addWidget (self.XYMaxInput, 5, 1, 1, 1)
+		
 		self.createButton = qtw.QPushButton("Create")
 		self.createButton.clicked.connect (self.createQuestion)
-		#self.createButton.clicked.connect (self.addQuestion)
 		layout.addWidget(self.createButton, 9, 1, 2,2)
-
-
-		
-
-		
 
 		self.btn = qtw.QPushButton("Open image file")
 		self.btn.clicked.connect(self.getfile)
@@ -155,73 +100,118 @@ class Window(qtw.QWidget):
 		self.check = []
 		self.randint = None
 		self.polls = []
+		self.rank = []
+
+		self.showhide('MultipleChoice')
 
 	def showhide(self, text):
 		if text == 'MultipleChoice':
+			self.table.setRowCount(0)
 			self.answer_here.show()
 			self.table.show()
 			self.answerExplanation.show()
 			self.answerExplanationInput.show()
+			self.addRowButton.show()
+			try: self.addRowButton.disconnect()
+			except Exception: pass
+			self.addRowButton.clicked.connect(self.addRowMCQ)
+			
 			#hide
 		elif text == 'Word Cloud':
 			self.answer_here.hide()
 			self.table.hide()
 			self.answerExplanation.hide()
 			self.answerExplanationInput.hide()
+			self.addRowButton.hide()
 			#hide
 			pass
 
 		elif text == 'Text Question':
+			self.table.setRowCount(0)
+			self.answer_here.show()
+			self.table.show()
+			self.answerExplanation.show()
+			self.answerExplanationInput.show()
+			self.addRowButton.show()
+			try: self.addRowButton.disconnect()
+			except Exception: pass
+			self.addRowButton.clicked.connect(self.addRowTXT)
+			
 			#hide
-			pass
+			
 		elif text == 'Ranking By Preference':
-			pass
+			self.table.setRowCount(0)
+			self.answer_here.show()
+			self.table.show()
+			self.answerExplanation.show()
+			self.answerExplanationInput.show()
+			self.addRowButton.show()
+			try: self.addRowButton.disconnect()
+			except Exception: pass
+			self.addRowButton.clicked.connect(self.addRowTXT)
 		elif text == 'Ranking By Order':
-			pass
+			self.table.setRowCount(0)
+			self.answer_here.show()
+			self.table.show()
+			self.answerExplanation.show()
+			self.answerExplanationInput.show()
+			self.addRowButton.show()
+			try: self.addRowButton.disconnect()
+			except Exception: pass
+			self.addRowButton.clicked.connect(self.addRowORD)
 		elif text == 'Numeric':
-			pass
+			self.table.setRowCount(0)
+			self.answer_here.show()
+			self.table.show()
+			self.answerExplanation.show()
+			self.answerExplanationInput.show()
+			self.addRowButton.show()
+			try: self.addRowButton.disconnect()
+			except Exception: pass
+			self.addRowNUM()
 		elif text == 'Rating':
-			pass
+			self.table.setRowCount(0)
+			self.answer_here.hide()
+			self.table.hide()
+			self.answerExplanation.hide()
+			self.answerExplanationInput.hide()
+			self.addRowButton.hide()
 		elif text == 'XY Plot':
-			pass
+			self.table.setRowCount(0)
+			self.answer_here.show()
+			self.table.show()
+			self.addRowButton.show()
+			try: self.addRowButton.disconnect()
+			except Exception: pass
+			self.addRowButton.clicked.connect(self.addRowTXT)
+			self.table.hideColumn(1)
+			self.table.hideColumn(3)
+			self.table.setRowCount(4)
+			self.xText = qtw.QTableWidgetItem()
+			self.xText = qtw.QLabel("Horizontal X axis")
+			self.table.setCellWidget(0,0,self.xText)
+
+			self.yText = qtw.QTableWidgetItem()
+			self.yText = qtw.QLabel("vertical Y axis")
+			self.table.setCellWidget(1,0,self.yText)
+
+			self.maxX = qtw.QTableWidgetItem()
+			self.maxX = qtw.QLabel("Max X value")
+			self.table.setCellWidget(2,0,self.maxX)
+
+			self.maxY = qtw.QTableWidgetItem()
+			self.maxY = qtw.QLabel("Max Y value")
+			self.table.setCellWidget(3,0,self.maxY)
+
 		elif text == 'Pin on Image':
-			pass
-			#hide
-	#	elif text == 'S':
-	#		#text
-	#		#image
-	#		#xtext
-	#		#ytext
-	#		#minx
-	#		#maxx
-	#		#miny
-	#		#maxy
-	#		#items[sequence, text]
-	#	elif text == 'ClickMapQuestion':
-	#		#text
-	#		#image
-	#		#options[]
-	#		#maxnumberselections
-	#		#correctanswers
-	#		#correctanswerexplanation
-
-	#def addAnswer(self):
-	#	if len(self.AnswerInput.text()) != 0:
-	#		self.checkBoxListWidget.addItem(self.AnswerInput.text())
-	#		self.answers.append(self.AnswerInput.text())
-	#		print(self.answers)
+			try: self.addRowButton.disconnect()
+			except Exception: pass
 
 
-	#def deleteAnswer(self):
-	#	if len(self.answers) > 0:
-	#		self.clicked = self.checkBoxListWidget.currentRow()
-	#		if self.clicked >= 0:
-	#			print(self.clicked)
-	#			self.answers.pop(self.clicked)
-	#			self.checkBoxListWidget.takeItem(self.clicked)
-	#		print(self.answers)
 
-	def addRow(self):
+	def addRowMCQ(self):
+		self.table.showColumn(1)
+		self.table.hideColumn(3)
 		row = self.table.rowCount()
 		self.table.insertRow(row)
 		chkBoxItem = qtw.QTableWidgetItem()
@@ -233,7 +223,53 @@ class Window(qtw.QWidget):
 		self.deleteAnswerButton = qtw.QPushButton("Delete")
 		self.deleteAnswerButton.clicked.connect(self.deleteAnswer)
 		self.table.setCellWidget(row,2,self.deleteAnswerButton)
+
+	def addRowTXT(self):
+		self.table.hideColumn(1)
+		self.table.hideColumn(3)
+		row = self.table.rowCount()
+		self.table.insertRow(row)
 		
+		self.deleteAnswerButton = qtw.QTableWidgetItem()
+		self.deleteAnswerButton = qtw.QPushButton("Delete")
+		self.deleteAnswerButton.clicked.connect(self.deleteAnswer)
+		self.table.setCellWidget(row,2,self.deleteAnswerButton)
+
+	def addRowORD(self):
+		self.table.hideColumn(1)
+		self.table.showColumn(3)
+		row = self.table.rowCount()
+		self.table.insertRow(row)
+		
+
+		self.deleteAnswerButton = qtw.QTableWidgetItem()
+		self.deleteAnswerButton = qtw.QPushButton("Delete")
+		self.deleteAnswerButton.clicked.connect(self.deleteAnswer)
+		self.table.setCellWidget(row,3,self.deleteAnswerButton)
+
+	def addRowNUM(self):
+		self.table.hideColumn(1)
+		self.table.hideColumn(3)
+		self.table.setRowCount(5)
+		self.minLabel = qtw.QTableWidgetItem()
+		self.minLabel = qtw.QLabel("Minimum Value")
+		self.table.setCellWidget(0,0,self.minLabel)
+
+		self.maxLabel = qtw.QTableWidgetItem()
+		self.maxLabel = qtw.QLabel("Maximum Value")
+		self.table.setCellWidget(1,0,self.maxLabel)
+
+		self.decimalPlaces = qtw.QTableWidgetItem()
+		self.decimalPlaces = qtw.QLabel("Decimal Places")
+		self.table.setCellWidget(2,0,self.decimalPlaces)
+
+		self.correctAnswer = qtw.QTableWidgetItem()
+		self.correctAnswer = qtw.QLabel("Correct Answer")
+		self.table.setCellWidget(3,0,self.correctAnswer)
+
+		self.errorMargin = qtw.QTableWidgetItem()
+		self.errorMargin = qtw.QLabel("Error Margin")
+		self.table.setCellWidget(4,0,self.errorMargin)
 
 
 	def deleteAnswer(self):
@@ -248,10 +284,6 @@ class Window(qtw.QWidget):
 		self.pixmap = qtg.QPixmap(fname)
 		self.le.setText(os.path.basename(fname))
 		print(os.path.basename(fname))
-
-	def editItem(self, item):
-		item.setFlags(item.flags() | qtc.Qt.ItemIsEditable)
-		self.checkBoxListWidget.editItem(item)
 		
 
 	def getfiles(self):
@@ -264,14 +296,23 @@ class Window(qtw.QWidget):
 	def createQuestion(self):
 		i = 0
 		for i in range(self.table.rowCount()):
-			self.answers.append(self.table.item(i,0).text())
-			print(self.table.item(i,0).text())
-			if self.table.item(i,1).checkState() == 2:
-				self.check.append(True)
-				print("True")
-			if self.table.item(i,1).checkState() == 0:
-				self.check.append(False)
-				print("False")
+			if self.q_typeBox.currentText() == 'MultipleChoice':
+				self.answers.append(self.table.item(i,0).text())
+				if self.table.item(i,1).checkState() == 2:
+					self.check.append(True)
+					print("True")
+				if self.table.item(i,1).checkState() == 0:
+					self.check.append(False)
+					print("False")
+			#if self.q_typeBox.currentText() == 'Text Question':
+			#	self.answers.append(self.table.item(i,0).text())
+			if self.q_typeBox.currentText() == 'XY Plot':
+				try: self.answers.append(self.table.item(i,0).text())
+				except Exception: pass
+			if self.q_typeBox.currentText() == 'Ranking By Preference' or self.q_typeBox.currentText() == 'Ranking By Order' or self.q_typeBox.currentText() == 'Text Question':
+				self.answers.append(self.table.item(i,0).text())
+			#print(self.table.item(4,0).text())
+
 			i=i+1
 		print(i)
 
@@ -294,12 +335,11 @@ class Window(qtw.QWidget):
 			else:
 				question['image'] = None
 			question['choices'] = []
-
 			x=0
 			for x in range(len(self.answers)):
+				#self.answers.append(self.table.item(x,0).text())
 				question['choices'].append({"id": random.randint(1000000,3000000), "alias": None, "text": self.answers[x], "isCorrectAnswer": self.check[x], "excludeFromResults": False, "image": None})
 				x= x+1
-
 			question['minNumberSelections'] = 1
 			question['maxNumberSelections'] = 2
 			question['resultFormat'] = "%"
@@ -307,6 +347,7 @@ class Window(qtw.QWidget):
 			question['weightingSetting'] = None
 			question['weightingFactor'] = None
 			question['correctAnswerExplanation'] = self.answerExplanationInput.text()
+			
 		if self.q_typeBox.currentText() == 'Word Cloud':
 			question['@type'] = "OpenTextQuestion"
 			question['wordCloudQuestion'] = True
@@ -324,13 +365,12 @@ class Window(qtw.QWidget):
 			question['maxWordCount'] = None
 			question['maxWordLength'] = None
 			question['correctAnswers'] = []
-
 			x=0
 			for x in range(len(self.answers)):
 				question['correctAnswers'].append({"text": self.answers[x]})
 				x= x+1
-
 			question['correctAnswerExplanation'] = self.answerExplanationInput.text()
+
 		if self.q_typeBox.currentText() == 'Text Question':
 			question['@type'] = "OpenTextQuestion"
 			question['wordCloudQuestion'] = False
@@ -348,19 +388,13 @@ class Window(qtw.QWidget):
 			question['maxWordCount'] = None
 			question['maxWordLength'] = None
 			question['correctAnswers'] = []
-
 			x=0
 			for x in range(len(self.answers)):
-				question['correctAnswers'].append({"text": self.answers[x]})
+				#self.answers.append(self.table.item(x,0).text())
+				question['correctAnswers'].append({x : self.answers[x]})
 				x= x+1
-
-			question['minNumberSelections'] = 1
-			question['maxNumberSelections'] = 2
-			question['resultFormat'] = "%"
-			question['distributableWeight'] = None
-			question['weightingSetting'] = None
-			question['weightingFactor'] = None
 			question['correctAnswerExplanation'] = self.answerExplanationInput.text()
+
 		if self.q_typeBox.currentText() == 'Ranking By Preference':
 			question['@type'] = "RankingQuestion"
 			question['lowerCaseAlias'] = ""
@@ -373,17 +407,16 @@ class Window(qtw.QWidget):
 			else:
 				question['image'] = None
 			question['choices'] = []
-
 			x=0
 			for x in range(len(self.answers)):
 				question['choices'].append({"id": random.randint(1000000,3000000), "sequence": x, "alias": None, "text": self.answers[x], "image": None})
 				x= x+1
-
 			question['minNumberSelections'] = 1
 			question['maxNumberSelections'] = 2
 			choices = []
 			question['correctAnswer'] = None
 			question['correctAnswerExplanation'] = self.answerExplanationInput.text()
+
 		if self.q_typeBox.currentText() == 'Ranking By Order':
 			question['@type'] = "RankingQuestion"
 			question['lowerCaseAlias'] = ""
@@ -396,19 +429,18 @@ class Window(qtw.QWidget):
 			else:
 				question['image'] = None
 			question['choices'] = []
-
 			x=0
-			rankId = random.randint(1000000,3000000)
+			choices = []
 			for x in range(len(self.answers)):
+				rankId = random.randint(1000000,3000000)
 				question['choices'].append({"id": rankId, "sequence": x, "alias": None, "text": self.answers[x], "image": None})
-				x= x+1
-
+				choices.append({"choiceId": rankId, "rank": self.table.item(x,2).text()})
+				x=x+1
 			question['minNumberSelections'] = 1
 			question['maxNumberSelections'] = 2
-			choices = []
-			choices.append({"choiceId": rankId, "rank": 1})
 			question['correctAnswer'] = choices
 			question['correctAnswerExplanation'] = self.answerExplanationInput.text()
+
 		if self.q_typeBox.currentText() == 'Numeric':
 			question['@type'] = "NumericQuestion"
 			question['lowerCaseAlias'] = ""
@@ -420,11 +452,23 @@ class Window(qtw.QWidget):
 			else:
 				question['image'] = None
 			question['resultFormat'] = "%"
-			question['min'] = self.minTextInput.text()
-			question['max'] = self.maxTextInput.text()
+			question['min'] = self.table.item(0,2).text()
+			question['max'] = self.table.item(1,2).text()
+			question['minLabel'] = None
+			question['maxLabel'] = None
+			correctAnswer = None
+			errorMargin = None
+			if self.table.item(3,2) != None or self.table.item(3,2) != None:
+				correctAnswer = float(self.table.item(3,2).text())
+				errorMargin = float(self.table.item(4,2).text())				
+				question['correctAnswers'] = {"min" : round(correctAnswer - errorMargin, int(self.table.item(2,2).text())), "max" : round(correctAnswer + errorMargin, int(self.table.item(2,2).text()))}
+			else:
+				question['correctAnswers'] = []
+			question['numberOfDecimals'] = self.table.item(2,2).text()
 			question['correctAnswerExplanation'] = self.answerExplanationInput.text()
+
 		if self.q_typeBox.currentText() == 'Rating':
-			question['@type'] = self.q_typeBox.currentText()
+			question['@type'] = "NumericQuestion"
 			question['lowerCaseAlias'] = ""
 			question['id'] = random.randint(1000000,3000000)
 			question['alias'] = ""
@@ -433,22 +477,17 @@ class Window(qtw.QWidget):
 				question['image'] = self.randint
 			else:
 				question['image'] = None
-			question['choices'] = []
-
-			x=0
-			for x in range(len(self.answers)):
-				question['choices'].append({"id": random.randint(1000000,3000000), "alias": None, "text": self.answers[x], "isCorrectAnswer": self.check[x], "excludeFromResults": False, "image": None})
-				x= x+1
-
-			question['minNumberSelections'] = 1
-			question['maxNumberSelections'] = 2
+			question['uiType'] = "rating"
 			question['resultFormat'] = "%"
-			question['distributableWeight'] = None
-			question['weightingSetting'] = None
-			question['weightingFactor'] = None
+			question['min'] = 1
+			question['max'] = 5
+			question['resultFormat'] = "%"
+			question['correctAnswers'] = []
+			question['numberOfDecimals'] = 0
 			question['correctAnswerExplanation'] = self.answerExplanationInput.text()
+
 		if self.q_typeBox.currentText() == 'XY Plot':
-			question['@type'] = self.q_typeBox.currentText()
+			question['@type'] = "ScatterPlotQuestion"
 			question['lowerCaseAlias'] = ""
 			question['id'] = random.randint(1000000,3000000)
 			question['alias'] = ""
@@ -457,22 +496,19 @@ class Window(qtw.QWidget):
 				question['image'] = self.randint
 			else:
 				question['image'] = None
-			question['choices'] = []
-
-			x=0
+			question['xText'] = self.table.item(0,2).text()
+			question['yText'] = self.table.item(1,2).text()
+			question['minX'] = 0
+			question['maxX'] = self.table.item(2,2).text()
+			question['minY'] = 0
+			question['maxY'] = self.table.item(3,2).text()
+			question['items'] = []
 			for x in range(len(self.answers)):
-				question['choices'].append({"id": random.randint(1000000,3000000), "alias": None, "text": self.answers[x], "isCorrectAnswer": self.check[x], "excludeFromResults": False, "image": None})
-				x= x+1
+				rankId = random.randint(1000000,3000000)
+				question['items'].append({"id": rankId, "alias": None, "sequence": x, "text": self.answers[x]})
 
-			question['minNumberSelections'] = 1
-			question['maxNumberSelections'] = 2
-			question['resultFormat'] = "%"
-			question['distributableWeight'] = None
-			question['weightingSetting'] = None
-			question['weightingFactor'] = None
-			question['correctAnswerExplanation'] = self.answerExplanationInput.text()
 		if self.q_typeBox.currentText() == 'Pin on Image':
-			question['@type'] = self.q_typeBox.currentText()
+			question['@type'] = "ClickMapQuestion"
 			question['lowerCaseAlias'] = ""
 			question['id'] = random.randint(1000000,3000000)
 			question['alias'] = ""
@@ -495,11 +531,13 @@ class Window(qtw.QWidget):
 			question['weightingSetting'] = None
 			question['weightingFactor'] = None
 			question['correctAnswerExplanation'] = self.answerExplanationInput.text()
+
 		self.polls.append(question)
 		self.questionBank.addItem(question['text'])
 		self.answers.clear()
 		self.check.clear()
 		self.table.clear()
+		self.q_typeBox.setCurrentText(self.q_typeBox.currentText())
 		print(self.polls)
 		
 
@@ -518,3 +556,4 @@ sys.exit(app.exec())
 
 # click add answer then type and edit it
 # select which questions to add to poll
+#clear aspects of table
