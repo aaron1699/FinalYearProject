@@ -601,7 +601,7 @@ class Window(qtw.QWidget):
 		self.answerExplanationInput.clear()
 		self.image_label.clear()
 		self.showhide(self.q_typeBox.currentText())
-		self.randint.clear()
+		self.randint = None
 		print(self.polls)
 		
 
