@@ -1,137 +1,41 @@
-import PyQt5.QtWidgets as qtw
-import PyQt5.QtGui as qtg
-import PyQt5.QtCore as qtc
-import json
 import sys
-import random
 import os
-import zipfile
-import shutil
+import json
+import random
+from PyQt5 import QtWidgets as qtw
+from PyQt5 import QtCore as qtc
+from PyQt5 import QtGui as qtg
 
 
-def delete_folder_on_exit(folder_path):
-    # Delete the folder if it exists
-		if os.path.exists(folder_path):
-			os.rmdir(folder_path)
+class PollController:
+	def __init__(self, model, view):
+		self.model = model
+		self.view = view
 
-class Window(qtw.QWidget):
-	def __init__(self):
-		super().__init__()
-		layout = qtw.QGridLayout()
-		layout.setContentsMargins(20, 20, 20, 20)
-		layout.setSpacing(10)
-		self.setWindowTitle("Vevox Editor")
-		self.setLayout(layout)
+		# Connect the view signals to the controller methods
+		self.view.createButton.clicked.connect(self.create_question)
+		self.view.deleteQuestionButton.clicked.connect(self.delete_question)
+		self.view.createPoll.clicked.connect(self.create_poll)
+		self.view.imageButton.clicked.connect(self.getfile)
+		self.view.q_typeBox.currentTextChanged.connect(self.showhide)
+		# Connect other view signals to the corresponding methods
 
-		# Group box for question type
-		q_type_group = qtw.QGroupBox("Question Type")
-		q_type_layout = qtw.QHBoxLayout()
-		q_type_group.setLayout(q_type_layout)
-		layout.addWidget(q_type_group, 1, 0, 1, 3)
+	#def create_question(self):
+	#	question = {
+	#		"type": self.view.q_typeBox.currentText(),
+	#		"text": self.view.questionInput.text(),
+	#		"explanation": self.view.answerExplanationInput.text(),
+	#		# Add other question properties
+	#	}
+	#	self.model.add_question(question)
+	#	self.view.questionBank.addItem(question["text"])
 
-		self.q_typeBox = qtw.QComboBox(self)
-		self.q_typeBox.addItem("MultipleChoice")
-		self.q_typeBox.addItem("Word Cloud")
-		self.q_typeBox.addItem("Text Question")
-		self.q_typeBox.addItem("Ranking By Preference")
-		self.q_typeBox.addItem("Ranking By Order")
-		self.q_typeBox.addItem("Numeric")
-		self.q_typeBox.addItem("Rating")
-		self.q_typeBox.addItem("XY Plot")
-		self.q_typeBox.addItem("Pin on Image")
-		q_type_layout.addWidget(self.q_typeBox)
-
-		# Group box for question details
-		question_group = qtw.QGroupBox("Question Details")
-		question_layout = qtw.QGridLayout()
-		question_group.setLayout(question_layout)
-		layout.addWidget(question_group, 2, 0, 3, 3)
-
-		self.questionText = qtw.QLabel("Question Text: ")
-		question_layout.addWidget(self.questionText, 0, 0)
-
-		self.questionInput = qtw.QLineEdit()
-		question_layout.addWidget(self.questionInput, 0, 1, 1, 2)
-
-		self.answer_here = qtw.QLabel("Enter Choices")
-
-		question_layout.addWidget(self.answer_here, 1, 0)
-
-		self.table = qtw.QTableWidget()
-		question_layout.addWidget(self.table, 1, 1, 3, 2)
-
-		self.table.setRowCount(0)
-		self.table.setColumnCount(4)
-		self.table.hideColumn(3)
-		self.table.setItem(0, 0, qtw.QTableWidgetItem("Name"))
-		header = self.table.horizontalHeader()
-		header.hide()
-
-		self.addRowButton = qtw.QPushButton("Add Row")
-		question_layout.addWidget(self.addRowButton, 2, 0)
-
-		#self.deleteAnswerButton = qtw.QPushButton("Delete")
-		#self.deleteAnswerButton.clicked.connect(self.deleteAnswer)
-		#question_layout.addWidget(self.deleteAnswerButton, 3, 0)
-
-		self.answerExplanation = qtw.QLabel("Answer Explanation")
-		question_layout.addWidget(self.answerExplanation, 4, 0)
-
-		self.answerExplanationInput = qtw.QLineEdit()
-		question_layout.addWidget(self.answerExplanationInput, 4, 1, 1, 2)
-
-		# Group box for actions
-		actions_group = qtw.QGroupBox("Actions")
-		actions_layout = qtw.QVBoxLayout()
-		actions_group.setLayout(actions_layout)
-		layout.addWidget(actions_group, 5, 0, 2, 3)
-
-		self.createButton = qtw.QPushButton("Create")
-		self.createButton.clicked.connect(self.createQuestion)
-		actions_layout.addWidget(self.createButton)
-
-		self.imageButton = qtw.QPushButton("Open image file")
-		self.imageButton.clicked.connect(self.getfile)
-		actions_layout.addWidget(self.imageButton)
-
-		self.image_label = qtw.QLabel(self)
-		actions_layout.addWidget(self.image_label)
-
-		# Group box for question bank
-		question_bank_group = qtw.QGroupBox("Question Bank")
-		question_bank_layout = qtw.QVBoxLayout()
-		question_bank_group.setLayout(question_bank_layout)
-		layout.addWidget(question_bank_group, 1, 4, 4, 3)
-
-		self.questionBank = qtw.QListWidget()
-		question_bank_layout.addWidget(self.questionBank)
-
-		# Group box for question bank actions
-		question_bank_actions_group = qtw.QGroupBox("Question Bank Actions")
-		question_bank_actions_layout = qtw.QHBoxLayout()
-		question_bank_actions_group.setLayout(question_bank_actions_layout)
-		layout.addWidget(question_bank_actions_group, 5, 4, 1, 3)
-
-		self.createPoll = qtw.QPushButton("Create Poll")
-		self.createPoll.clicked.connect(self.createpoll)
-		question_bank_actions_layout.addWidget(self.createPoll)
-
-		self.deleteQuestionButton = qtw.QPushButton("Delete Question")
-		self.deleteQuestionButton.clicked.connect(self.deleteQuestion)
-		question_bank_actions_layout.addWidget(self.deleteQuestionButton)
-
-		self.q_typeBox.currentTextChanged.connect(self.showhide)
-
-		self.answers = []
-		self.check = []
-		self.randint = None
-		self.polls = []
-		self.rank = []
-
-		os.mkdir('resources')
-
-		self.showhide('MultipleChoice')
-
+	def delete_question(self):
+		selected_row = self.view.questionBank.currentRow()
+		self.model.remove_question(selected_row)
+		self.view.questionBank.takeItem(selected_row)
+		
+	
 	def showhide(self, text):
 		if text == 'MultipleChoice':
 			self.table.setRowCount(0)
@@ -212,8 +116,8 @@ class Window(qtw.QWidget):
 			try: self.addRowButton.disconnect()
 			except Exception: pass
 			self.addRowButton.clicked.connect(self.addRowTXT)
-			#self.table.hideColumn(1)
-			#self.table.hideColumn(3)
+			self.table.hideColumn(1)
+			self.table.hideColumn(3)
 			self.table.setRowCount(4)
 			self.xText = qtw.QTableWidgetItem()
 			self.xText = qtw.QLabel("Horizontal X axis")
@@ -232,8 +136,6 @@ class Window(qtw.QWidget):
 			self.table.setCellWidget(3,0,self.maxY)
 
 		elif text == 'Pin on Image':
-			self.table.hide()
-			self.addRowButton.hide()
 			try: self.addRowButton.disconnect()
 			except Exception: pass
 
@@ -282,17 +184,15 @@ class Window(qtw.QWidget):
 
 		# Create a rank dropdown menu for the new row
 		row_count_options = [str(i+1) for i in range(row+1)]
-		self.rank_box = qtw.QComboBox()
-		self.rank_box.addItems(row_count_options)
-		self.table.setCellWidget(row, 2, self.rank_box)
-		self.rank_boxes.append(self.rank_box)
-		
+		rank_box = qtw.QComboBox()
+		rank_box.addItems(row_count_options)
+		self.table.setCellWidget(row, 2, rank_box)
+		self.rank_boxes.append(rank_box)
 
 		# Update the items in the existing dropdown menus
 		for box in self.rank_boxes:
 			box.clear()
 			box.addItems([str(i+1) for i in range(self.table.rowCount())])
-			
 
 		self.deleteAnswerButton = qtw.QTableWidgetItem()
 		self.deleteAnswerButton = qtw.QPushButton("Delete")
@@ -335,14 +235,13 @@ class Window(qtw.QWidget):
 		fname, _ = qtw.QFileDialog.getOpenFileName(
 			self, 'Open file', 'c:\\', "Image files (*.jpg *.gif *.png)")
 		self.image_label.setPixmap(qtg.QPixmap(fname))
-		#self.image_label.scaled(300, 300)
+		self.image_label.scaled(300, 300)
 		print(os.path.basename(fname))
 		
 
 	def getfiles(self):
 		os.chdir("resources")
 		self.randint = str(random.randint(1000000,3000000))
-		self.pixmap = self.image_label.pixmap()
 		self.pixmap.save(self.randint + ".png")
 		os.chdir("..")
 		print(self.randint)
@@ -368,12 +267,9 @@ class Window(qtw.QWidget):
 			if self.q_typeBox.currentText() == 'XY Plot':
 				try: self.answers.append(self.table.item(i,0).text())
 				except Exception: pass
-			if self.q_typeBox.currentText() == 'Ranking By Preference' or self.q_typeBox.currentText() == 'Text Question':
+			if self.q_typeBox.currentText() == 'Ranking By Preference' or self.q_typeBox.currentText() == 'Ranking By Order' or self.q_typeBox.currentText() == 'Text Question':
 				self.answers.append(self.table.item(i,0).text())
-			if  self.q_typeBox.currentText() == 'Ranking By Order':
-				self.answers.append(self.table.item(i,0).text())
-				orderId = self.table.cellWidget(i, 2)
-				self.rank.append(orderId.currentText())
+
 
 			i=i+1
 		print(i)
@@ -381,10 +277,8 @@ class Window(qtw.QWidget):
 		print(len(self.answers))
 		print(self.answers)
 		print(self.check)
-		print(self.rank)
 
-		if self.image_label.pixmap() != None:
-			self.getfiles()
+		self.getfiles()
 
 		
 		question = {}
@@ -456,7 +350,7 @@ class Window(qtw.QWidget):
 			x=0
 			for x in range(len(self.answers)):
 				#self.answers.append(self.table.item(x,0).text())
-				question['correctAnswers'].append(self.answers[x])
+				question['correctAnswers'].append({x : self.answers[x]})
 				x= x+1
 			question['correctAnswerExplanation'] = self.answerExplanationInput.text()
 
@@ -479,7 +373,7 @@ class Window(qtw.QWidget):
 			question['minNumberSelections'] = 1
 			question['maxNumberSelections'] = 2
 			choices = []
-			question['correctAnswer'] = choices
+			question['correctAnswer'] = None
 			question['correctAnswerExplanation'] = self.answerExplanationInput.text()
 
 		if self.q_typeBox.currentText() == 'Ranking By Order':
@@ -493,14 +387,13 @@ class Window(qtw.QWidget):
 				question['image'] = self.randint
 			else:
 				question['image'] = None
-			choices = []
 			question['choices'] = []
 			x=0
-			
+			choices = []
 			for x in range(len(self.answers)):
 				rankId = random.randint(1000000,3000000)
 				question['choices'].append({"id": rankId, "sequence": x, "alias": None, "text": self.answers[x], "image": None})
-				choices.append({"choiceId": rankId, "rank": self.rank[x]})
+				choices.append({"choiceId": rankId, "rank": self.table.item(x,2).text()})
 				x=x+1
 			question['minNumberSelections'] = 1
 			question['maxNumberSelections'] = 2
@@ -517,12 +410,11 @@ class Window(qtw.QWidget):
 				question['image'] = self.randint
 			else:
 				question['image'] = None
-			question['uiType'] = "inputfield"
 			question['resultFormat'] = "%"
 			question['min'] = self.table.item(0,2).text()
 			question['max'] = self.table.item(1,2).text()
-			question['minLabel'] = ""
-			question['maxLabel'] = ""
+			question['minLabel'] = None
+			question['maxLabel'] = None
 			correctAnswer = None
 			errorMargin = None
 			if self.table.item(3,2) != None or self.table.item(3,2) != None:
@@ -584,12 +476,19 @@ class Window(qtw.QWidget):
 				question['image'] = self.randint
 			else:
 				question['image'] = None
-			question['options'] = []
+			question['choices'] = []
 
-			#x=0
-			#for x in range(len(self.answers)):
-			#	question['options'].append({"id": random.randint(1000000,3000000), "alias": None, "text": self.answers[x], "isCorrectAnswer": self.check[x], "excludeFromResults": False, "image": None})
-			#	x= x+1
+			x=0
+			for x in range(len(self.answers)):
+				question['choices'].append({"id": random.randint(1000000,3000000), "alias": None, "text": self.answers[x], "isCorrectAnswer": self.check[x], "excludeFromResults": False, "image": None})
+				x= x+1
+
+			question['minNumberSelections'] = 1
+			question['maxNumberSelections'] = 2
+			question['resultFormat'] = "%"
+			question['distributableWeight'] = None
+			question['weightingSetting'] = None
+			question['weightingFactor'] = None
 			question['correctAnswerExplanation'] = self.answerExplanationInput.text()
 
 		self.polls.append(question)
@@ -597,11 +496,7 @@ class Window(qtw.QWidget):
 		self.answers.clear()
 		self.check.clear()
 		self.table.clear()
-		self.questionInput.clear()
-		self.answerExplanationInput.clear()
-		self.image_label.clear()
 		self.showhide(self.q_typeBox.currentText())
-		self.randint.clear()
 		print(self.polls)
 		
 
@@ -611,34 +506,4 @@ class Window(qtw.QWidget):
 		with open("polls.json", "w") as outfile:
 			outfile.write(json_object)
 
-		folder_path = 'resources'
-		json_path = 'polls.json'
-		output_path = 'test.zip'
-		with zipfile.ZipFile(output_path, 'w') as zip_file:
-			for root, dirs, files in os.walk(folder_path):
-				for file in files:
-					file_path = os.path.join(root, file)
-					zip_file.write(file_path)
-    
-			zip_file.write(json_path)
-		
 
-		shutil.rmtree("resources")
-		os.mkdir("resources")
-            
-
-
-app = qtw.QApplication(sys.argv)
-window = Window()
-window.show()
-app.aboutToQuit.connect(lambda: delete_folder_on_exit('resources'))
-sys.exit(app.exec())
-
-
-# click add answer then type and edit it
-# select which questions to add to poll
-# clear aspects of table
-# images view and add?
-# pin on image answers
-# saving and deleting images
-# text order and numeric dont work
