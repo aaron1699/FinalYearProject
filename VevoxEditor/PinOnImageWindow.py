@@ -1,11 +1,9 @@
-import sys
 import math
-import os
 from collections import namedtuple
 
 import numpy as np
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtGui, QtWidgets
 from PyQt5 import uic
 import shapely._geometry as sg
 
@@ -16,9 +14,8 @@ class PinOnImageWindow(QtWidgets.QWidget):
 
         self.fname, _ = QtWidgets.QFileDialog.getOpenFileName(
 		    self, 'Open file', 'c:\\', "Image files (*.jpg *.gif *.png)")
-        #self.addcarbutton.clicked.connect(self.onaddcarbuttonclicked)
+       
         self.deleteButton.clicked.connect(self.onDeleteButtonClicked)
-        #self.deleteallbutton.clicked.connect(self.ondeleteallbuttonclicked)
 
         self.input_pixmap = QtGui.QPixmap(self.fname)
         self.output_pixmap = QtGui.QPixmap(self.fname)
@@ -117,17 +114,3 @@ class PinOnImageWindow(QtWidgets.QWidget):
         painter.end()
       
 
-    #def getfile(self):
-	   # self.fname, _ = qtw.QFileDialog.getOpenFileName(
-		  #  self, 'Open file', 'c:\\', "Image files (*.jpg *.gif *.png)")
-	   # self.image_label.setPixmap(qtg.QPixmap(self.fname))
-	    #self.image_label.scaled(300, 300)
-	    #print(os.path.basename(self.fname))
-#app = QtWidgets.QApplication(sys.argv)
-#window = POIasnwersWindow()
-#layout = QtWidgets.QVBoxLayout()
-#layout.addWidget(window)
-#widget = QtWidgets.QWidget()
-#widget.setLayout
-#window.show()
-#app.exec()

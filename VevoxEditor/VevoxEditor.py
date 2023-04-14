@@ -133,6 +133,9 @@ class Window(qtw.QWidget):
 		self.polls = []
 		self.rank = []
 
+		try:
+			shutil.rmtree("resources")
+		except Exception: pass
 		os.mkdir('resources')
 
 		self.showhide('MultipleChoice')

@@ -13,24 +13,38 @@ import PyQt5.QtWidgets as qtw
 
 
 def generator():
-    filename, _ = qtw.QFileDialog.getOpenFileName(None, "Select a zip file", ".", "Zip files (*.zip)")
+    try:
+        filename, _ = qtw.QFileDialog.getOpenFileName(None, "Select a zip file", ".", "Zip files (*.zip)")
 
-    path_wkhtmltopdf = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
-    config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
-
-
-
-
-    print("This is the name of the script ", sys.argv[0])
-
-    #filepath = r"C:\Users\Aaron\source\repos\FinalYearProject\VevoxPDFGenerator\poll_week6_v2.zip"
-    zfile = zipfile.ZipFile(filename)
-
-    for file in zfile.namelist():
-        zfile.extract(file)
+        path_wkhtmltopdf = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
+        config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
 
 
-    poll_file = zfile.open('polls.json')
+
+
+        print("This is the name of the script ", sys.argv[0])
+
+        #filepath = r"C:\Users\Aaron\source\repos\FinalYearProject\VevoxPDFGenerator\poll_week6_v2.zip"
+        zfile = zipfile.ZipFile(filename)
+
+        for file in zfile.namelist():
+            zfile.extract(file)
+
+
+        poll_file = zfile.open('polls.json')
+    except Exception as e:
+    # display an error message box with the error message
+        msg_box = qtw.QMessageBox()
+        msg_box.setIcon(qtw.QMessageBox.Critical)
+        msg_box.setText("An error has occurred")
+        msg_box.setInformativeText(str(e))
+        msg_box.setWindowTitle("Error")
+        msg_box.setWindowModality(False)
+        msg_box.exec_()
+        return
+    
+        
+
     poll_data = json.load(poll_file)
 
     file_list = [f for f in listdir('resources/') if isfile(join('resources', f))]
@@ -218,11 +232,16 @@ def generator():
         html += f'<div style="height: 20px; width:100%; position: relative; top: 20px" />'
 
 
-    file = open('output.html', 'w')
-    file.write(html)
-    file.close()
+    #file = open('output.html', 'w')
+    #file.write(html)
+    #file.close()
+    msg_box = qtw.QMessageBox()
+    msg_box.setText("PDF Generated!")
+    msg_box.exec_()
 
-    pdfkit.from_string(html, 'output.pdf', configuration=config, options={"enable-local-file-access": ""})
+    savefilename, _ = qtw.QFileDialog.getSaveFileName(None, "Save PDF file", ".", "PDF files (*.pdf)")
+    pdfkit.from_string(html, savefilename, configuration=config, options={"enable-local-file-access": ""})
+    
 
     shutil.rmtree(image_directory)
 
