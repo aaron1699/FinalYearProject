@@ -66,8 +66,9 @@ class Window(qtw.QWidget):
 		self.table.setColumnCount(4)
 		self.table.hideColumn(3)
 		#self.table.setItem(0, 0, qtw.QTableWidgetItem("Name"))
-		header = self.table.horizontalHeader()
-		header.hide()
+		headers = ["choice","true ornfalse", "delete", ]
+		self.table.setHorizontalHeaderLabels(headers)
+		#header.hide()
 
 		self.addRowButton = qtw.QPushButton("Add Row")
 		question_layout.addWidget(self.addRowButton, 2, 0)
@@ -91,9 +92,14 @@ class Window(qtw.QWidget):
 		self.createButton.clicked.connect(self.createQuestion)
 		actions_layout.addWidget(self.createButton)
 
-		self.imageButton = qtw.QPushButton("Open image file")
+		self.imageButton = qtw.QPushButton("Open image")
 		self.imageButton.clicked.connect(self.getfile)
 		actions_layout.addWidget(self.imageButton)
+		
+		self.deleteImageButton = qtw.QPushButton("Delete Image")
+		self.deleteImageButton.clicked.connect(self.deleteImage)
+		actions_layout.addWidget(self.deleteImageButton)
+
 
 		self.image_label = qtw.QLabel(self)
 		actions_layout.addWidget(self.image_label)
@@ -133,9 +139,10 @@ class Window(qtw.QWidget):
 		self.polls = []
 		self.rank = []
 
-		try:
-			shutil.rmtree("resources")
-		except Exception: pass
+		#try:
+		#	shutil.rmtree("resources")
+		#except Exception: pass
+
 		os.mkdir('resources')
 
 		self.showhide('MultipleChoice')
@@ -144,6 +151,43 @@ class Window(qtw.QWidget):
 	def pdfgen(self):
 		self.generator = generator()
 
+	def deleteImage(self):
+		self.image_label.clear()
+
+	def deleteAnswer(self):
+		button = self.sender()
+		if button:
+			row = self.table.indexAt(button.pos()).row()
+			self.table.removeRow(row)
+			
+
+	def getfile(self):
+		self.fname, _ = qtw.QFileDialog.getOpenFileName(
+			self, 'Open file', 'c:\\', "Image files (*.jpg *.gif *.png)")
+		self.image_label.setPixmap(qtg.QPixmap(self.fname))
+		#self.image_label.scaled(300, 300)
+		print(os.path.basename(self.fname))
+		
+	def POIgetfile(self): # get image for Pin On Image (POI) question 
+		self.view = PinOnImageWindow()
+		self.view.show()
+		self.image_label.setPixmap(qtg.QPixmap(self.view.fname))
+		#self.image_label.scaled(300, 300)
+		print(os.path.basename(self.view.fname))
+		return
+
+	def saveImage(self):
+		os.chdir("resources")
+		self.randint = str(random.randint(1000000,3000000))
+		self.pixmap = self.image_label.pixmap()
+		self.pixmap.save(self.randint + ".png")
+		os.chdir("..")
+		print(self.randint)
+
+	def deleteQuestion(self):
+		selected_row = self.questionBank.currentRow()
+		self.questionBank.takeItem(selected_row)
+		self.polls.pop(selected_row)
 
 	#ViewHandler
 	def MCQView(self):
@@ -260,6 +304,8 @@ class Window(qtw.QWidget):
 		try: self.addRowButton.disconnect()
 		except Exception: pass
 		self.addAnswerstoImageButton.show()
+		try: self.addAnswerstoImageButton.disconnect()
+		except Exception: pass
 		self.addAnswerstoImageButton.clicked.connect(self.POIgetfile)
 		#self.addAnswerstoImageButton.clicked.connect(self.imageAnswersWindow)
 
@@ -366,40 +412,6 @@ class Window(qtw.QWidget):
 		self.errorMargin = qtw.QLabel("Error Margin")
 		self.table.setCellWidget(4,0,self.errorMargin)
 
-
-	def deleteAnswer(self):
-		button = self.sender()
-		if button:
-			row = self.table.indexAt(button.pos()).row()
-			self.table.removeRow(row)
-			
-
-	def getfile(self):
-		self.fname, _ = qtw.QFileDialog.getOpenFileName(
-			self, 'Open file', 'c:\\', "Image files (*.jpg *.gif *.png)")
-		self.image_label.setPixmap(qtg.QPixmap(self.fname))
-		#self.image_label.scaled(300, 300)
-		print(os.path.basename(self.fname))
-		
-	def POIgetfile(self):
-		self.view = PinOnImageWindow()
-		self.view.show()
-		self.image_label.setPixmap(qtg.QPixmap(self.view.fname))
-		#self.image_label.scaled(300, 300)
-		print(os.path.basename(self.view.fname))
-
-	def getfiles(self):
-		os.chdir("resources")
-		self.randint = str(random.randint(1000000,3000000))
-		self.pixmap = self.image_label.pixmap()
-		self.pixmap.save(self.randint + ".png")
-		os.chdir("..")
-		print(self.randint)
-
-	def deleteQuestion(self):
-		selected_row = self.questionBank.currentRow()
-		self.questionBank.takeItem(selected_row)
-		self.polls.pop(selected_row)
 			
 
 	def createQuestion(self):
@@ -433,7 +445,7 @@ class Window(qtw.QWidget):
 		print(self.rank)
 
 		if self.image_label.pixmap() != None:
-			self.getfiles()
+			self.saveImage()
 
 		
 		question = {}
@@ -669,13 +681,18 @@ class Window(qtw.QWidget):
     
 			zip_file.write(json_path)
 		
-
+		self.polls.clear()
+		self.questionBank.clear()
 		shutil.rmtree("resources")
 		os.mkdir("resources")
-            
+           
+		msg_box = qtw.QMessageBox()
+		msg_box.setText("Poll Created!")
+		msg_box.exec_()
 
 
 app = qtw.QApplication(sys.argv)
+app.setStyleSheet("QComboBox { font-size: 16px; }")
 window = Window()
 window.show()
 app.aboutToQuit.connect(lambda: delete_folder_on_exit('resources'))
@@ -691,6 +708,6 @@ sys.exit(app.exec())
 # text order and numeric dont work
 # View, viewLogic, addRowLogic, deleteAnswer/deleteRow, deleteQuestion, CreateQuestion(for7 types of q diff functions), CreatePoll
 
-#delete images from poll
+#delete images from poll**
 #add pdfgenerator
-#add min/maxselections
+#add min/maxselections**

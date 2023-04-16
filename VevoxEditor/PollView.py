@@ -623,8 +623,8 @@ class Window(qtw.QWidget):
             
 
 
-app = qtw.QApplication(sys.argv)
-window = Window()
-window.show()
-app.aboutToQuit.connect(lambda: delete_folder_on_exit('resources'))
-sys.exit(app.exec())
+#app = qtw.QApplication(sys.argv)
+#window = Window()
+#window.show()
+#app.aboutToQuit.connect(lambda: delete_folder_on_exit('resources'))
+#sys.exit(app.exec())

@@ -9,6 +9,8 @@ from os.path import isfile, join
 import re
 import shutil
 import PyQt5.QtWidgets as qtw
+import cv2
+from PyQt5.QtWidgets import QInputDialog, QWidget
 
 
 
@@ -43,7 +45,17 @@ def generator():
         msg_box.exec_()
         return
     
-        
+    window = QWidget()
+
+    width = QInputDialog.getInt(window, "Image size", "Enter maximum width:")
+    height = QInputDialog.getInt(window, "Image size", "Enter maximum height:")
+ 
+    global maxWidth 
+    global maxHeight
+
+    maxWidth = width
+    maxHeight = height
+    window.show()
 
     poll_data = json.load(poll_file)
 
@@ -61,13 +73,38 @@ def generator():
 
     print(new_list)
 
-
     def findImage(name):
-            imagestring = ''
-            if name['image'] != None and any(name['image'] in s for s in new_list):
-                matching = [s for s in new_list if name['image'] in s]
-                imagestring = os.path.dirname(os.path.abspath(__file__)) + "\\resources\\" + str(matching[0])
-            return imagestring
+        if name.get('image'):
+            for s in new_list:
+                if name['image'] in s:
+                    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources", s)
+        return ""
+
+    #def findImage(name):
+    #        imagestring = ''
+    #        if name['image'] != None and any(name['image'] in s for s in new_list):
+    #            matching = [s for s in new_list if name['image'] in s]
+    #            imagestring = os.path.dirname(os.path.abspath(__file__)) + "\\resources\\" + str(matching[0])
+    #        return imagestring
+
+    def draw_ovals_on_image(image_path, ovals, image_name):
+        # Load the image
+        image = cv2.imread(image_path)
+
+        # Iterate through the ovals and draw each one on the image
+        for oval in ovals:
+            x = int(oval["x"] * image.shape[1])
+            y = int(oval["y"] * image.shape[0])
+            x_radius = int(oval["xRadius"] * image.shape[1])
+            y_radius = int(oval["yRadius"] * image.shape[0])
+            color = (0, 0, 255)  # BGR color for red
+            thickness = 2
+
+            cv2.ellipse(image, (x, y), (x_radius, y_radius), 0, 0, 360, color, thickness)
+
+        cv2.imwrite(image_name, image)
+
+   
 
     class MultipleChoiceQuestion:
         def __init__(self, question):
@@ -81,8 +118,10 @@ def generator():
                 html += f'<img src="{question_image}" style="max-width:{maxWidth}px;max-height:{maxHeight}px;"/>'
 
             for choices in self.question['choices']:
-                    print(choices['text'], choices['isCorrectAnswer'], choices['image'])
-                    html += f"<p>{choices['text']} {choices['isCorrectAnswer']}</p>"
+                    print(choices['text'], choices['isCorrectAnswer'])
+                    tickOrCross = '&#10003;' if choices['isCorrectAnswer'] else '&#10007;'  # Unicode characters for tick and cross
+                    color = 'green' if choices['isCorrectAnswer'] else 'red'
+                    html += f'<p>{choices["text"]} <span style="color:{color};">{tickOrCross}</span></p>'
                     choices_image = findImage(choices)
                     if choices['image'] != None:
                         html += f'<img src="{choices_image}" style="max-width:{maxWidth}px;max-height:{maxHeight}px;"/>'
@@ -120,10 +159,15 @@ def generator():
             question_image = findImage(self.question)
             if self.question['image'] != None:
                 html += f'<img src="{question_image}" style="max-width:{maxWidth}px;max-height:{maxHeight}px;"/>'
+                if bool(question["correctAnswers"]):
+                    draw_ovals_on_image(question_image, question['correctAnswers'], question_image)
+                    html += f'<img src="{question_image}" style="max-width:{maxWidth}px;max-height:{maxHeight}px;"/>'
+                
+                
             if len(question['options']) != 0:    
                     html += f"<p>{question['options']}</p>"
-            if len(question['correctAnswers']) != 0:
-                    html += f"<p>{question['correctAnswers']}</p>"
+            #if len(question['correctAnswers']) != 0:
+            #        html += f"<p>{question['correctAnswers']}</p>"
             if question['correctAnswerExplanation'] != None:
                     html += f"<p>{question['correctAnswerExplanation']}</p>"
 
@@ -197,10 +241,7 @@ def generator():
     #title
 
     html = ''
-    global maxWidth 
-    global maxHeight
-    maxWidth = 200
-    maxHeight = 200
+    
 
     for question_number, question in enumerate(poll_data):
 
@@ -235,9 +276,8 @@ def generator():
     #file = open('output.html', 'w')
     #file.write(html)
     #file.close()
-    msg_box = qtw.QMessageBox()
-    msg_box.setText("PDF Generated!")
-    msg_box.exec_()
+    msgBox = qtw.QMessageBox(qtw.QMessageBox.NoIcon, "Generator", "PDF Generated!", qtw.QMessageBox.Ok, parent=None)
+    msgBox.exec_()
 
     savefilename, _ = qtw.QFileDialog.getSaveFileName(None, "Save PDF file", ".", "PDF files (*.pdf)")
     pdfkit.from_string(html, savefilename, configuration=config, options={"enable-local-file-access": ""})

@@ -3,16 +3,16 @@ import os
 import json
 import random
 #from PollModel import PollModel
-from PollView import PollView
+from PollView import Window
 from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtCore as qtc
 from PyQt5 import QtGui as qtg
 
 
 class PollController:
-	def __init__(self, view):
+	def __init__(self):
 		#self.model = PollModel
-		self.view = PollView(self)
+		self.view = Window()
 
 		# Connect the view signals to the controller methods
 	#def set_controller(self):
@@ -31,8 +31,8 @@ def main():
     app = qtw.QApplication(sys.argv)
 
     #model = PollModel()
-    view = PollView()
-    controller = PollController(view)
+    view = Window()
+    #controller = PollController(view)
 
     #controller(controller)
     view.show()

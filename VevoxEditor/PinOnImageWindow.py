@@ -1,36 +1,35 @@
 import math
-from collections import namedtuple
 
-import numpy as np
-
-from PyQt5 import QtGui, QtWidgets
+from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5 import uic
-import shapely._geometry as sg
+
 
 class PinOnImageWindow(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         uic.loadUi("gui.ui", self)
 
-        self.fname, _ = QtWidgets.QFileDialog.getOpenFileName(
-		    self, 'Open file', 'c:\\', "Image files (*.jpg *.gif *.png)")
-       
-        self.deleteButton.clicked.connect(self.onDeleteButtonClicked)
-
+        self.openFile()
+        self.deleteButton.clicked.connect(self.deleteButtonClicked)
+        self.doneButton.clicked.connect(self.close)
         self.input_pixmap = QtGui.QPixmap(self.fname)
         self.output_pixmap = QtGui.QPixmap(self.fname)
 
         self.init_coords = (None, None)
         self.end_coords = (None, None)
         self.items = []
-        self.tool = None
-        self.tool_buttons = [self.deleteButton]
-        self.rects = [] # list to store rectangles
+        #self.tool = None
+        #self.tool_buttons = [self.deleteButton]
+        self.circles = [] # list to store circles
         self.redraw()
         self.correctItems = []
 
-        
-        
+    
+    
+    def openFile(self):
+        self.fname, _ = QtWidgets.QFileDialog.getOpenFileName(
+		    self, 'Open file', 'c:\\', "Image files (*.jpg *.gif *.png)")
+        return
 
     def widget2input(self, x, y):
         x_ret = x-self.inputLabel.x()
@@ -56,39 +55,32 @@ class PinOnImageWindow(QtWidgets.QWidget):
         if self.end_coords[0] is None or self.end_coords[1] is None:
             return
         # Transform init and end coords into x, y, width and height
-        x = min(self.init_coords[0], self.end_coords[0])
-        y = min(self.init_coords[1], self.end_coords[1])
-        width = int(math.fabs(self.init_coords[0]-self.end_coords[0]))
-        height = int(math.fabs(self.init_coords[1]-self.end_coords[1]))
+        x = (self.init_coords[0] + self.end_coords[0]) / 2
+        y = (self.init_coords[1] + self.end_coords[1]) / 2
+        width = int(math.fabs(self.init_coords[0]-self.end_coords[0]))/2
+        height = int(math.fabs(self.init_coords[1]-self.end_coords[1]))/2
         print(f"x: {x}, y: {y}, width: {width}, height: {height}")
         self.items.append((x, y, width, height))
-        self.correctItems.append({"x": x/self.input_pixmap.width(), "y": y/self.input_pixmap.height(), "xRadius": width/self.input_pixmap.width(), "yRadius" :height/self.input_pixmap.height()})
+        self.correctItems.append({"x": x/self.input_pixmap.width(), "y": y/self.input_pixmap.height(), "xRadius": width/self.input_pixmap.width(), "yRadius" :height/self.input_pixmap.height()})        
         self.updateAndRedraw()
         print(self.items)
         print(self.correctItems)
 
-    def onDeleteButtonClicked(self):
-        for tool in self.tool_buttons:
-            if tool != self.deleteButton:
-                tool.setChecked(False)
-        if self.deleteButton.isChecked():
-            self.tool = 'delete'
-        else:
-            self.tool = None
-        print(self.tool)
+    def deleteButtonClicked(self):
         if self.items:
-            self.items.pop()  # remove most recently drawn rectangle from list
+            self.items.pop()  # remove most recently drawn circle from list
             self.correctItems.pop()
             self.updateAndRedraw()
 
+    #def doneButtonClicked(self):
 
 
     def THE_FUNCTION(self):
         output = self.input_image.copy()
-        for rect in self.rects:
-            x, y, w, h = rect
-            self.rects.append((x, y, w, h)) # append to list
-        return output, self.rects
+        for circle in self.circles:
+            x, y, r = circle
+            self.circles.append((x, y, r)) # append to list
+        return output, self.circles
 
     def redraw(self):
         self.inputLabel.setPixmap(self.input_pixmap)
@@ -105,12 +97,17 @@ class PinOnImageWindow(QtWidgets.QWidget):
         pen.setWidth(2)
         painter.setPen(pen)
         for item in self.items:
-            painter.drawRect(item[0], item[1], item[2], item[3])
+            x, y, rx, ry = item
+            rect = QtCore.QRectF(x - rx, y - ry, 2 * rx, 2 * ry)
+            painter.drawEllipse(rect)
         if self.init_coords[0] is not None and self.init_coords[1] is not None and \
                 self.end_coords[0] is not None and self.end_coords[1] is not None:
-            painter.drawRect(self.init_coords[0], self.init_coords[1],
-                              self.end_coords[0] - self.init_coords[0],
-                              self.end_coords[1] - self.init_coords[1])
+            x = (self.init_coords[0] + self.end_coords[0]) / 2
+            y = (self.init_coords[1] + self.end_coords[1]) / 2
+            rx = math.fabs(self.init_coords[0] - self.end_coords[0]) / 2
+            ry = math.fabs(self.init_coords[1] - self.end_coords[1]) / 2
+            rect = QtCore.QRectF(x - rx, y - ry, 2 * rx, 2 * ry)
+            painter.drawEllipse(rect)
         painter.end()
-      
 
+    
