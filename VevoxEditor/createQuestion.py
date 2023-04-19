@@ -1,100 +1,13 @@
-import sys
-import os
-import json
 import random
-import zipfile
-#from PollModel import PollModel
-from PollView import View
-from PyQt5 import QtWidgets as qtw
-from PyQt5 import QtCore as qtc
-from PyQt5 import QtGui as qtg
-from ViewHandler import ViewHandler
-from VevoxPDFGenerator import generator
-from PinOnImageWindow import PinOnImageWindow
-import shutil
 
-
-def delete_folder_on_exit(folder_path):
-    # Delete the folder if it exists
-		if os.path.exists(folder_path):
-			shutil.rmtree(folder_path)
-
-try:
-	shutil.rmtree("resources")
-except Exception: pass
-
-class PollController():
-	def __init__(self, view, viewHandler):
-			#super().__init__()
-		#self.model = PollModel
+class createQuestion:
+	def __init__(self, view):
 		self.view = view
-		self.viewHandler = viewHandler
 		self.answers = []
 		self.check = []
 		self.randint = None
 		self.polls = []
 		self.rank = []
-		#self.generator = generator()
-		# Connect the view signals to the controller methods
-	#def set_controller(self):
-		self.view.createButton.clicked.connect(self.createQuestion)
-		self.view.deleteQuestionButton.clicked.connect(self.deleteQuestion)
-		self.view.createPoll.clicked.connect(self.createpoll)
-		self.view.imageButton.clicked.connect(self.getfile)
-		self.view.pdfgeneratorButton.clicked.connect(self.pdfgen)
-		self.view.questionTypeBox.currentTextChanged.connect(self.viewHandler.showhide)
-		self.view.deleteImageButton.clicked.connect(self.deleteImage)
-		self.view.addAnswerstoImageButton.clicked.connect(self.POIgetfile)
-		#add poimage button connected
-		# Connect other view signals to the corresponding methods
-
-		self.viewHandler.showhide('MultipleChoice')
-		os.mkdir('resources')
-
-	def pdfgen(self):
-		self.generator = generator()
-
-	def deleteImage(self):
-		self.view.image_label.clear()
-
-	def deleteAnswer(self):
-		button = self.view.sender()
-		if button:
-			row = self.view.table.indexAt(button.pos()).row()
-			self.view.table.removeRow(row)
-			
-
-	def getfile(self):
-		self.fname, _ = qtw.QFileDialog.getOpenFileName(
-			None, 'Open file', 'c:\\', "Image files (*.jpg *.gif *.png)")
-		self.view.image_label.setPixmap(qtg.QPixmap(self.fname))
-		#self.image_label.scaled(300, 300)
-		print(os.path.basename(self.fname))
-		
-	def POIgetfile(self): # get image for Pin On Image (POI) question 
-		self.pinOnImage = PinOnImageWindow()
-		self.pinOnImage.show()
-		self.view.image_label.setPixmap(qtg.QPixmap(self.pinOnImage.fname))
-		#self.image_label.scaled(300, 300)
-		print(os.path.basename(self.pinOnImage.fname))
-		return
-
-	def saveImage(self):
-		os.chdir("resources")
-		self.randint = str(random.randint(1000000,3000000))
-		self.pixmap = self.view.image_label.pixmap()
-		self.pixmap.save(self.randint + ".png")
-		os.chdir("..")
-		print(self.randint)
-
-	def deleteQuestion(self):
-		selected_row = self.view.questionBank.currentRow()
-		if selected_row != -1:
-			self.view.questionBank.takeItem(selected_row)
-			if self.polls:
-				self.polls.pop(selected_row)
-
-
 	def createQuestion(self):		
 		i = 0
 		for i in range(self.view.table.rowCount()):
@@ -328,72 +241,6 @@ class PollController():
 				question['image'] = None
 			question['options'] = []
 			question['maxNumberSelections'] = 1
-			question['correctAnswers'] = self.pinOnImage.correctItems
+			question['correctAnswers'] = self.view.correctItems
 			question['correctAnswerExplanation'] = self.view.answerExplanationInput.text()
 
-
-		self.polls.append(question)
-		self.view.questionBank.addItem(question['text'])
-		self.answers.clear()
-		self.check.clear()
-		self.view.table.clear()
-		self.view.questionInput.clear()
-		self.view.answerExplanationInput.clear()
-		self.view.image_label.clear()
-		self.viewHandler.showhide(self.view.questionTypeBox.currentText())
-		self.randint = None
-		print(self.polls)
-
-
-	def createpoll(self):
-		# Write the JSON data to a file
-		with open("polls.json", "w") as outfile:
-			json.dump(self.polls, outfile)
-
-		# Create paths to the files
-		folder_path = os.path.join('resources')
-		json_path = os.path.join(os.path.dirname(folder_path), 'polls.json')
-		output_path = os.path.join('test.zip')
-
-		# Create the zip file and add files to it
-		with zipfile.ZipFile(output_path, 'w') as zip_file:
-			for root, dirs, files in os.walk(folder_path):
-				for file in files:
-					file_path = os.path.join(root, file)
-					zip_file.write(file_path)
-			zip_file.write(json_path)
-
-		# Delete all the files in the folder
-		file_list = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
-		for file_name in file_list:
-			file_path = os.path.join(folder_path, file_name)
-			os.remove(file_path)
-
-		self.polls.clear()
-		self.view.questionBank.clear()
-		#shutil.rmtree("resources")
-		#os.mkdir("resources")
-           
-		msg_box = qtw.QMessageBox()
-		msg_box.setText("Poll Created!")
-		msg_box.exec_()
-
-
-def main():
-
-	app = qtw.QApplication(sys.argv)
-	
-	#model = PollModel()
-	view = View()
-	viewHandler = ViewHandler(view)
-	controller = PollController(view, viewHandler)
-
-	view.show()
-
-	app.aboutToQuit.connect(lambda: delete_folder_on_exit('resources'))
-
-	sys.exit(app.exec())
-
-
-if __name__ == '__main__':
-    main()

@@ -12,6 +12,7 @@ class PinOnImageWindow(QtWidgets.QWidget):
         self.openFile()
         self.deleteButton.clicked.connect(self.deleteButtonClicked)
         self.doneButton.clicked.connect(self.close)
+        self.deleteAllButton.clicked.connect(self.deleteAllClicked)
         self.input_pixmap = QtGui.QPixmap(self.fname)
         self.output_pixmap = QtGui.QPixmap(self.fname)
 
@@ -72,15 +73,10 @@ class PinOnImageWindow(QtWidgets.QWidget):
             self.correctItems.pop()
             self.updateAndRedraw()
 
-    #def doneButtonClicked(self):
-
-
-    def THE_FUNCTION(self):
-        output = self.input_image.copy()
-        for circle in self.circles:
-            x, y, r = circle
-            self.circles.append((x, y, r)) # append to list
-        return output, self.circles
+    def deleteAllClicked(self):
+        self.items.clear()
+        self.correctItems.clear()
+        self.updateAndRedraw()
 
     def redraw(self):
         self.inputLabel.setPixmap(self.input_pixmap)

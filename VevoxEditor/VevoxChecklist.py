@@ -200,226 +200,226 @@ class Window(qtw.QWidget):
 			if self.polls:
 				self.polls.pop(selected_row)
 
-	#ViewHandler
-	def MCQView(self):
-		self.table.showColumn(1)
-		self.table.hideColumn(3)
-		self.table.setRowCount(0)
-		self.answer_here.show()
-		self.table.show()
-		self.answerExplanation.show()
-		self.answerExplanationInput.show()
-		self.addAnswerstoImageButton.hide()
-		self.addRowButton.show()
-		try: self.addRowButton.disconnect()
-		except Exception: pass
-		self.addRowButton.clicked.connect(self.addRowMCQ)
+	##ViewHandler
+	#def MCQView(self):
+	#	self.table.showColumn(1)
+	#	self.table.hideColumn(3)
+	#	self.table.setRowCount(0)
+	#	self.answer_here.show()
+	#	self.table.show()
+	#	self.answerExplanation.show()
+	#	self.answerExplanationInput.show()
+	#	self.addAnswerstoImageButton.hide()
+	#	self.addRowButton.show()
+	#	try: self.addRowButton.disconnect()
+	#	except Exception: pass
+	#	self.addRowButton.clicked.connect(self.addRowMCQ)
 
-	def wordCloudView(self):
-		self.answer_here.hide()
-		self.table.hide()
-		self.answerExplanation.hide()
-		self.answerExplanationInput.hide()
-		self.addAnswerstoImageButton.hide()
-		self.addRowButton.hide()
-
-
-	def textQuestionView(self):
-		self.table.setRowCount(0)
-		self.answer_here.show()
-		self.table.show()
-		self.answerExplanation.show()
-		self.answerExplanationInput.show()
-		self.addAnswerstoImageButton.hide()
-		self.addRowButton.show()
-		try: self.addRowButton.disconnect()
-		except Exception: pass
-		self.addRowButton.clicked.connect(self.addRowTXT)
-
-	def rankingPreferenceView(self):
-		self.table.setRowCount(0)
-		self.answer_here.show()
-		self.table.show()
-		self.answerExplanation.show()
-		self.answerExplanationInput.show()
-		self.addAnswerstoImageButton.hide()
-		self.addRowButton.show()
-		try: self.addRowButton.disconnect()
-		except Exception: pass
-		self.addRowButton.clicked.connect(self.addRowTXT)
-
-	def rankingOrderingView(self):
-		self.table.setRowCount(0)
-		self.answer_here.show()
-		self.table.show()
-		self.answerExplanation.show()
-		self.answerExplanationInput.show()
-		self.addAnswerstoImageButton.hide()
-		self.addRowButton.show()
-		try: self.addRowButton.disconnect()
-		except Exception: pass
-		self.addRowButton.clicked.connect(self.addRowORD)
-
-	def numericView(self):
-		self.table.setRowCount(0)
-		self.answer_here.show()
-		self.table.show()
-		self.answerExplanation.show()
-		self.answerExplanationInput.show()
-		self.addAnswerstoImageButton.hide()
-		self.addRowButton.hide()
-		try: self.addRowButton.disconnect()
-		except Exception: pass
-		self.addRowNUM()
-
-	def ratingView(self):
-		self.table.setRowCount(0)
-		self.answer_here.hide()
-		self.table.hide()
-		self.answerExplanation.hide()
-		self.answerExplanationInput.hide()
-		self.addRowButton.hide()
-		self.addAnswerstoImageButton.hide()
-
-	def xyPlotView(self):
-		self.table.setRowCount(0)
-		self.answer_here.show()
-		self.table.show()
-		self.addAnswerstoImageButton.hide()
-		self.addRowButton.show()
-		try: self.addRowButton.disconnect()
-		except Exception: pass
-		self.addRowButton.clicked.connect(self.addRowTXT)
-		#self.table.hideColumn(1)
-		#self.table.hideColumn(3)
-		self.table.setRowCount(4)
-		self.xText = qtw.QTableWidgetItem()
-		self.xText = qtw.QLabel("Horizontal X axis")
-		self.table.setCellWidget(0,0,self.xText)
-
-		self.yText = qtw.QTableWidgetItem()
-		self.yText = qtw.QLabel("vertical Y axis")
-		self.table.setCellWidget(1,0,self.yText)
-
-		self.maxX = qtw.QTableWidgetItem()
-		self.maxX = qtw.QLabel("Max X value")
-		self.table.setCellWidget(2,0,self.maxX)
-
-		self.maxY = qtw.QTableWidgetItem()
-		self.maxY = qtw.QLabel("Max Y value")
-		self.table.setCellWidget(3,0,self.maxY)
-
-	def pinOnImageView(self):
-		self.table.hide()
-		self.addRowButton.hide()
-		try: self.addRowButton.disconnect()
-		except Exception: pass
-		self.addAnswerstoImageButton.show()
-		try: self.addAnswerstoImageButton.disconnect()
-		except Exception: pass
-		self.addAnswerstoImageButton.clicked.connect(self.POIgetfile)
-
-	def showhide(self, text):
-		if text == 'MultipleChoice':
-			self.MCQView()
-		elif text == 'Word Cloud':
-			self.wordCloudView()
-		elif text == 'Text Question':
-			self.textQuestionView()
-		elif text == 'Ranking By Preference':
-			self.rankingPreferenceView()
-		elif text == 'Ranking By Order':
-			self.rankingOrderingView()
-		elif text == 'Numeric':
-			self.numericView()
-		elif text == 'Rating':
-			self.ratingView()
-		elif text == 'XY Plot':
-			self.xyPlotView()
-		elif text == 'Pin on Image':
-			self.pinOnImageView()
+	#def wordCloudView(self):
+	#	self.answer_here.hide()
+	#	self.table.hide()
+	#	self.answerExplanation.hide()
+	#	self.answerExplanationInput.hide()
+	#	self.addAnswerstoImageButton.hide()
+	#	self.addRowButton.hide()
 
 
-	#addingRowsLogicHandler
+	#def textQuestionView(self):
+	#	self.table.setRowCount(0)
+	#	self.answer_here.show()
+	#	self.table.show()
+	#	self.answerExplanation.show()
+	#	self.answerExplanationInput.show()
+	#	self.addAnswerstoImageButton.hide()
+	#	self.addRowButton.show()
+	#	try: self.addRowButton.disconnect()
+	#	except Exception: pass
+	#	self.addRowButton.clicked.connect(self.addRowTXT)
 
-	def addRowMCQ(self):
-		row = self.table.rowCount()
-		self.table.insertRow(row)
-		chkBoxItem = qtw.QTableWidgetItem()
-		chkBoxItem.setFlags(qtc.Qt.ItemIsUserCheckable | qtc.Qt.ItemIsEnabled)
-		chkBoxItem.setCheckState(qtc.Qt.Unchecked)       
-		self.table.setItem(row,1,chkBoxItem)
+	#def rankingPreferenceView(self):
+	#	self.table.setRowCount(0)
+	#	self.answer_here.show()
+	#	self.table.show()
+	#	self.answerExplanation.show()
+	#	self.answerExplanationInput.show()
+	#	self.addAnswerstoImageButton.hide()
+	#	self.addRowButton.show()
+	#	try: self.addRowButton.disconnect()
+	#	except Exception: pass
+	#	self.addRowButton.clicked.connect(self.addRowTXT)
 
-		self.deleteAnswerButton = qtw.QTableWidgetItem()
-		self.deleteAnswerButton = qtw.QPushButton("Delete")
-		self.deleteAnswerButton.clicked.connect(self.deleteAnswer)
-		self.table.setCellWidget(row,2,self.deleteAnswerButton)
+	#def rankingOrderingView(self):
+	#	self.table.setRowCount(0)
+	#	self.answer_here.show()
+	#	self.table.show()
+	#	self.answerExplanation.show()
+	#	self.answerExplanationInput.show()
+	#	self.addAnswerstoImageButton.hide()
+	#	self.addRowButton.show()
+	#	try: self.addRowButton.disconnect()
+	#	except Exception: pass
+	#	self.addRowButton.clicked.connect(self.addRowORD)
 
-	def addRowTXT(self):
-		self.table.hideColumn(1)
-		self.table.hideColumn(3)
-		row = self.table.rowCount()
-		self.table.insertRow(row)
+	#def numericView(self):
+	#	self.table.setRowCount(0)
+	#	self.answer_here.show()
+	#	self.table.show()
+	#	self.answerExplanation.show()
+	#	self.answerExplanationInput.show()
+	#	self.addAnswerstoImageButton.hide()
+	#	self.addRowButton.hide()
+	#	try: self.addRowButton.disconnect()
+	#	except Exception: pass
+	#	self.addRowNUM()
+
+	#def ratingView(self):
+	#	self.table.setRowCount(0)
+	#	self.answer_here.hide()
+	#	self.table.hide()
+	#	self.answerExplanation.hide()
+	#	self.answerExplanationInput.hide()
+	#	self.addRowButton.hide()
+	#	self.addAnswerstoImageButton.hide()
+
+	#def xyPlotView(self):
+	#	self.table.setRowCount(0)
+	#	self.answer_here.show()
+	#	self.table.show()
+	#	self.addAnswerstoImageButton.hide()
+	#	self.addRowButton.show()
+	#	try: self.addRowButton.disconnect()
+	#	except Exception: pass
+	#	self.addRowButton.clicked.connect(self.addRowTXT)
+	#	#self.table.hideColumn(1)
+	#	#self.table.hideColumn(3)
+	#	self.table.setRowCount(4)
+	#	self.xText = qtw.QTableWidgetItem()
+	#	self.xText = qtw.QLabel("Horizontal X axis")
+	#	self.table.setCellWidget(0,0,self.xText)
+
+	#	self.yText = qtw.QTableWidgetItem()
+	#	self.yText = qtw.QLabel("vertical Y axis")
+	#	self.table.setCellWidget(1,0,self.yText)
+
+	#	self.maxX = qtw.QTableWidgetItem()
+	#	self.maxX = qtw.QLabel("Max X value")
+	#	self.table.setCellWidget(2,0,self.maxX)
+
+	#	self.maxY = qtw.QTableWidgetItem()
+	#	self.maxY = qtw.QLabel("Max Y value")
+	#	self.table.setCellWidget(3,0,self.maxY)
+
+	#def pinOnImageView(self):
+	#	self.table.hide()
+	#	self.addRowButton.hide()
+	#	try: self.addRowButton.disconnect()
+	#	except Exception: pass
+	#	self.addAnswerstoImageButton.show()
+	#	try: self.addAnswerstoImageButton.disconnect()
+	#	except Exception: pass
+	#	self.addAnswerstoImageButton.clicked.connect(self.POIgetfile)
+
+	#def showhide(self, text):
+	#	if text == 'MultipleChoice':
+	#		self.MCQView()
+	#	elif text == 'Word Cloud':
+	#		self.wordCloudView()
+	#	elif text == 'Text Question':
+	#		self.textQuestionView()
+	#	elif text == 'Ranking By Preference':
+	#		self.rankingPreferenceView()
+	#	elif text == 'Ranking By Order':
+	#		self.rankingOrderingView()
+	#	elif text == 'Numeric':
+	#		self.numericView()
+	#	elif text == 'Rating':
+	#		self.ratingView()
+	#	elif text == 'XY Plot':
+	#		self.xyPlotView()
+	#	elif text == 'Pin on Image':
+	#		self.pinOnImageView()
+
+
+	##addingRowsLogicHandler
+
+	#def addRowMCQ(self):
+	#	row = self.table.rowCount()
+	#	self.table.insertRow(row)
+	#	chkBoxItem = qtw.QTableWidgetItem()
+	#	chkBoxItem.setFlags(qtc.Qt.ItemIsUserCheckable | qtc.Qt.ItemIsEnabled)
+	#	chkBoxItem.setCheckState(qtc.Qt.Unchecked)       
+	#	self.table.setItem(row,1,chkBoxItem)
+
+	#	self.deleteAnswerButton = qtw.QTableWidgetItem()
+	#	self.deleteAnswerButton = qtw.QPushButton("Delete")
+	#	self.deleteAnswerButton.clicked.connect(self.deleteAnswer)
+	#	self.table.setCellWidget(row,2,self.deleteAnswerButton)
+
+	#def addRowTXT(self):
+	#	self.table.hideColumn(1)
+	#	self.table.hideColumn(3)
+	#	row = self.table.rowCount()
+	#	self.table.insertRow(row)
 		
-		self.deleteAnswerButton = qtw.QTableWidgetItem()
-		self.deleteAnswerButton = qtw.QPushButton("Delete")
-		self.deleteAnswerButton.clicked.connect(self.deleteAnswer)
-		self.table.setCellWidget(row,2,self.deleteAnswerButton)
+	#	self.deleteAnswerButton = qtw.QTableWidgetItem()
+	#	self.deleteAnswerButton = qtw.QPushButton("Delete")
+	#	self.deleteAnswerButton.clicked.connect(self.deleteAnswer)
+	#	self.table.setCellWidget(row,2,self.deleteAnswerButton)
 
-	def addRowORD(self):
-		self.table.hideColumn(1)
-		self.table.showColumn(3)
-		row = self.table.rowCount()
-		self.table.insertRow(row)
-		self.rank_boxes = []
-		for i in range(self.table.rowCount()):
-			rank_box = qtw.QComboBox()
-			rank_box.addItems([str(j+1) for j in range(self.table.rowCount())])
-			self.table.setCellWidget(i, 2, rank_box)
-			self.rank_boxes.append(rank_box)
+	#def addRowORD(self):
+	#	self.table.hideColumn(1)
+	#	self.table.showColumn(3)
+	#	row = self.table.rowCount()
+	#	self.table.insertRow(row)
+	#	self.rank_boxes = []
+	#	for i in range(self.table.rowCount()):
+	#		rank_box = qtw.QComboBox()
+	#		rank_box.addItems([str(j+1) for j in range(self.table.rowCount())])
+	#		self.table.setCellWidget(i, 2, rank_box)
+	#		self.rank_boxes.append(rank_box)
 
-		# Create a rank dropdown menu for the new row
-		row_count_options = [str(i+1) for i in range(row+1)]
-		self.rank_box = qtw.QComboBox()
-		self.rank_box.addItems(row_count_options)
-		self.table.setCellWidget(row, 2, self.rank_box)
-		self.rank_boxes.append(self.rank_box)
+	#	# Create a rank dropdown menu for the new row
+	#	row_count_options = [str(i+1) for i in range(row+1)]
+	#	self.rank_box = qtw.QComboBox()
+	#	self.rank_box.addItems(row_count_options)
+	#	self.table.setCellWidget(row, 2, self.rank_box)
+	#	self.rank_boxes.append(self.rank_box)
 		
 
-		# Update the items in the existing dropdown menus
-		for box in self.rank_boxes:
-			box.clear()
-			box.addItems([str(i+1) for i in range(self.table.rowCount())])
+	#	# Update the items in the existing dropdown menus
+	#	for box in self.rank_boxes:
+	#		box.clear()
+	#		box.addItems([str(i+1) for i in range(self.table.rowCount())])
 			
 
-		self.deleteAnswerButton = qtw.QTableWidgetItem()
-		self.deleteAnswerButton = qtw.QPushButton("Delete")
-		self.deleteAnswerButton.clicked.connect(self.deleteAnswer)
-		self.table.setCellWidget(row,3,self.deleteAnswerButton)
+	#	self.deleteAnswerButton = qtw.QTableWidgetItem()
+	#	self.deleteAnswerButton = qtw.QPushButton("Delete")
+	#	self.deleteAnswerButton.clicked.connect(self.deleteAnswer)
+	#	self.table.setCellWidget(row,3,self.deleteAnswerButton)
 
-	def addRowNUM(self):
-		self.table.hideColumn(1)
-		self.table.hideColumn(3)
-		self.table.setRowCount(5)
-		self.minLabel = qtw.QTableWidgetItem()
-		self.minLabel = qtw.QLabel("Minimum Value")
-		self.table.setCellWidget(0,0,self.minLabel)
+	#def addRowNUM(self):
+	#	self.table.hideColumn(1)
+	#	self.table.hideColumn(3)
+	#	self.table.setRowCount(5)
+	#	self.minLabel = qtw.QTableWidgetItem()
+	#	self.minLabel = qtw.QLabel("Minimum Value")
+	#	self.table.setCellWidget(0,0,self.minLabel)
 
-		self.maxLabel = qtw.QTableWidgetItem()
-		self.maxLabel = qtw.QLabel("Maximum Value")
-		self.table.setCellWidget(1,0,self.maxLabel)
+	#	self.maxLabel = qtw.QTableWidgetItem()
+	#	self.maxLabel = qtw.QLabel("Maximum Value")
+	#	self.table.setCellWidget(1,0,self.maxLabel)
 
-		self.decimalPlaces = qtw.QTableWidgetItem()
-		self.decimalPlaces = qtw.QLabel("Decimal Places")
-		self.table.setCellWidget(2,0,self.decimalPlaces)
+	#	self.decimalPlaces = qtw.QTableWidgetItem()
+	#	self.decimalPlaces = qtw.QLabel("Decimal Places")
+	#	self.table.setCellWidget(2,0,self.decimalPlaces)
 
-		self.correctAnswer = qtw.QTableWidgetItem()
-		self.correctAnswer = qtw.QLabel("Correct Answer")
-		self.table.setCellWidget(3,0,self.correctAnswer)
+	#	self.correctAnswer = qtw.QTableWidgetItem()
+	#	self.correctAnswer = qtw.QLabel("Correct Answer")
+	#	self.table.setCellWidget(3,0,self.correctAnswer)
 
-		self.errorMargin = qtw.QTableWidgetItem()
-		self.errorMargin = qtw.QLabel("Error Margin")
-		self.table.setCellWidget(4,0,self.errorMargin)
+	#	self.errorMargin = qtw.QTableWidgetItem()
+	#	self.errorMargin = qtw.QLabel("Error Margin")
+	#	self.table.setCellWidget(4,0,self.errorMargin)
 	
 			
 

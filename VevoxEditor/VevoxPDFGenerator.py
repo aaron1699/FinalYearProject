@@ -12,7 +12,8 @@ import PyQt5.QtWidgets as qtw
 import cv2
 from PyQt5.QtWidgets import QInputDialog, QWidget
 
-
+global maxHeight
+global maxWidth
 
 def generator():
     try:
@@ -22,7 +23,7 @@ def generator():
         config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
 
 
-
+            
 
         print("This is the name of the script ", sys.argv[0])
 
@@ -45,18 +46,17 @@ def generator():
         msg_box.exec_()
         return
     
+    
+    
+
     window = QWidget()
-
-    width = QInputDialog.getInt(window, "Image size", "Enter maximum width:")
     height = QInputDialog.getInt(window, "Image size", "Enter maximum height:")
- 
-    global maxWidth 
-    global maxHeight
-
-    maxWidth = width
-    maxHeight = height
+    width = QInputDialog.getInt(window, "Image size", "Enter maximum width:")
+    maxWidth = width[0]
+    maxHeight = height[0]
     window.show()
-
+    window.hide()
+    
     poll_data = json.load(poll_file)
 
     file_list = [f for f in listdir('resources/') if isfile(join('resources', f))]
@@ -72,6 +72,9 @@ def generator():
         i = i + 1
 
     print(new_list)
+    print(maxHeight)
+    print(maxWidth)
+
 
     def findImage(name):
         if name.get('image'):
@@ -109,6 +112,7 @@ def generator():
     class MultipleChoiceQuestion:
         def __init__(self, question):
             self.question = question
+            
 
         def to_html(self):
 
@@ -185,7 +189,9 @@ def generator():
                 html += f'<img src="{question_image}" style="max-width:{maxWidth}px;max-height:{maxHeight}px;"/>'
 
             for answers in self.question['correctAnswers']:
-                html += f"<p>{answers}</p>"
+                tickOrCross = '&#10003;'  # Unicode characters for tick and cross
+                color = 'green'
+                html += f'<p>{answers} <span style="color:{color};">{tickOrCross}</span></p>'
             if question['correctAnswerExplanation'] != None:
                     html += f"<p>{question['correctAnswerExplanation']}</p>"
 
@@ -280,8 +286,18 @@ def generator():
     msgBox.exec_()
 
     savefilename, _ = qtw.QFileDialog.getSaveFileName(None, "Save PDF file", ".", "PDF files (*.pdf)")
-    pdfkit.from_string(html, savefilename, configuration=config, options={"enable-local-file-access": ""})
-    
+    try:
+        pdfkit.from_string(html, savefilename, configuration=config, options={"enable-local-file-access": ""})
+    except Exception as e:
+    # display an error message box with the error message
+        msg_box = qtw.QMessageBox()
+        msg_box.setIcon(qtw.QMessageBox.Critical)
+        msg_box.setText("An error has occurred")
+        msg_box.setInformativeText(str(e))
+        msg_box.setWindowTitle("Error")
+        msg_box.setWindowModality(False)
+        msg_box.exec_()
+        return
 
     shutil.rmtree(image_directory)
 
