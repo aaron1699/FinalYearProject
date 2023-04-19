@@ -56,12 +56,6 @@ class PollController():
 
 	def deleteImage(self):
 		self.view.image_label.clear()
-
-	def deleteAnswer(self):
-		button = self.view.sender()
-		if button:
-			row = self.view.table.indexAt(button.pos()).row()
-			self.view.table.removeRow(row)
 			
 
 	def getfile(self):
