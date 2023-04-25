@@ -1,6 +1,5 @@
 import PyQt5.QtWidgets as qtw
 import PyQt5.QtCore as qtc
-#from PollView import View
 
 class ViewHandler:
     def __init__(self, view):
@@ -30,12 +29,13 @@ class ViewHandler:
         self.view.answerExplanation.show()
         self.view.answerExplanationInput.show()
         self.view.addRowButton.show()
+        self.view.imageButton.show()
 
     #setup views for those that have a fixed number of columns and rows
 
     def numericSetup(self):
         self.view.table.setRowCount(5)
-        self.view.table.showColumn(3)
+        self.view.table.showColumn(2)
         self.view.addRowButton.hide()
         self.minLabel = qtw.QTableWidgetItem()
         self.minLabel = qtw.QLabel("Minimum Value")
@@ -120,8 +120,9 @@ class ViewHandler:
         self.view.answerExplanation.show()
         self.view.answerExplanationInput.show()
         self.view.addAnswerstoImageButton.show()
+        self.view.imageButton.hide()
         
-    # Add the remaining views in a similar fashion
+
 
     def showhide(self, text):
         view_switcher = {
@@ -139,7 +140,7 @@ class ViewHandler:
         if text in view_switcher:
             view_switcher[text]()
 
-    # Keep the methods for adding rows and other functionalities
+
 
     
 
