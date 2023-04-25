@@ -13,14 +13,12 @@ class PinOnImageWindow(QtWidgets.QWidget):
         self.deleteButton.clicked.connect(self.deleteButtonClicked)
         self.doneButton.clicked.connect(self.close)
         self.deleteAllButton.clicked.connect(self.deleteAllClicked)
-        self.input_pixmap = QtGui.QPixmap(self.fname)
-        self.output_pixmap = QtGui.QPixmap(self.fname)
+        self.input_pixmap = QtGui.QPixmap(self.fname).scaled(1024, 576, QtCore.Qt.KeepAspectRatio)
+        self.output_pixmap = QtGui.QPixmap(self.fname).scaled(1024, 576, QtCore.Qt.KeepAspectRatio)
 
         self.init_coords = (None, None)
         self.end_coords = (None, None)
         self.items = []
-        #self.tool = None
-        #self.tool_buttons = [self.deleteButton]
         self.circles = [] # list to store circles
         self.redraw()
         self.correctItems = []
@@ -94,16 +92,14 @@ class PinOnImageWindow(QtWidgets.QWidget):
         painter.setPen(pen)
         for item in self.items:
             x, y, rx, ry = item
-            rect = QtCore.QRectF(x - rx, y - ry, 2 * rx, 2 * ry)
-            painter.drawEllipse(rect)
+            ellipse = QtCore.QRectF(x - rx, y - ry, 2 * rx, 2 * ry)
+            painter.drawEllipse(ellipse)
         if self.init_coords[0] is not None and self.init_coords[1] is not None and \
                 self.end_coords[0] is not None and self.end_coords[1] is not None:
             x = (self.init_coords[0] + self.end_coords[0]) / 2
             y = (self.init_coords[1] + self.end_coords[1]) / 2
             rx = math.fabs(self.init_coords[0] - self.end_coords[0]) / 2
             ry = math.fabs(self.init_coords[1] - self.end_coords[1]) / 2
-            rect = QtCore.QRectF(x - rx, y - ry, 2 * rx, 2 * ry)
-            painter.drawEllipse(rect)
+            ellipse = QtCore.QRectF(x - rx, y - ry, 2 * rx, 2 * ry)
+            painter.drawEllipse(ellipse)
         painter.end()
-
-    
