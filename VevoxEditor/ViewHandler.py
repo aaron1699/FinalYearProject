@@ -15,6 +15,8 @@ class ViewHandler:
         self.view.table.hide()
         self.view.answerExplanation.hide()
         self.view.answerExplanationInput.hide()
+        self.view.maxNumberOfSelections.hide()
+        self.view.maxNumberOfSelectionsInput.hide()
         self.view.addAnswerstoImageButton.hide()
         self.view.addRowButton.hide()
 
@@ -82,6 +84,8 @@ class ViewHandler:
         self.setup_common_elements()
         self.view.table.showColumn(1)
         self.view.table.showColumn(2)
+        self.view.maxNumberOfSelections.show()
+        self.view.maxNumberOfSelectionsInput.show()
         self.view.addRowButton.clicked.connect(self.addRowMCQ)
 
     def wordCloudView(self):
@@ -95,6 +99,8 @@ class ViewHandler:
         self.reset_view()
         self.setup_common_elements()
         self.view.table.showColumn(2)
+        self.view.maxNumberOfSelections.show()
+        self.view.maxNumberOfSelectionsInput.show()
         self.view.addRowButton.clicked.connect(self.addRowTXT)
     def rankingOrderingView(self):
         self.reset_view()
@@ -149,7 +155,7 @@ class ViewHandler:
         self.view.table.insertRow(row)
         chkBoxItem = qtw.QTableWidgetItem()
         chkBoxItem.setFlags(qtc.Qt.ItemIsUserCheckable | qtc.Qt.ItemIsEnabled)
-        chkBoxItem.setCheckState(qtc.Qt.Unchecked)       
+        chkBoxItem.setCheckState(qtc.Qt.Unchecked)   
         self.view.table.setItem(row,1,chkBoxItem)
 
         self.deleteAnswerButton = qtw.QTableWidgetItem()

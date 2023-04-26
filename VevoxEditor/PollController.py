@@ -43,6 +43,7 @@ class PollController():
 		self.view.deleteImageButton.clicked.connect(self.deleteImage)
 		self.view.addAnswerstoImageButton.clicked.connect(self.POIgetfile)
 		self.view.importPollButton.clicked.connect(self.importPoll)
+		self.view.deleteAllButton.clicked.connect(self.deleteAll)
 
 		self.viewHandler.showhide('MultipleChoice')
 		os.mkdir('resources')
@@ -111,6 +112,11 @@ class PollController():
 
 				self.polls.pop(selected_row)
 
+	def deleteAll(self):
+		self.polls.clear()
+		self.view.questionBank.clear()
+		self.delete_files_in_folder("resources")
+
 
 	def importPoll(self):
 		polldata = self.loadData()
@@ -144,6 +150,7 @@ class PollController():
 		self.view.answerExplanationInput.clear()
 		self.view.image_label.clear()
 		self.viewHandler.showhide(self.view.questionTypeBox.currentText())
+		self.view.maxNumberOfSelectionsInput.clear()
 		self.randint = None
 
 
@@ -184,7 +191,8 @@ class PollController():
 	def create_poll(self):
 		folder_path = os.path.join('resources')
 		json_path = os.path.join(os.path.dirname(folder_path), 'polls.json')
-		output_path = os.path.join('test.zip')
+		filename, _ = qtw.QFileDialog.getSaveFileName(None, "Save zip file", ".", "Zip files (*.zip)")
+		output_path = os.path.join(filename)
 
 		self.write_polls_to_file(self.polls)
 

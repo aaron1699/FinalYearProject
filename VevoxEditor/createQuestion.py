@@ -46,8 +46,8 @@ class MultipleChoiceQuestion(BaseQuestion):
 			"text" : self.view.questionInput.text(),
             "image" : self.randint if self.randint is not None else None,
             "choices": self.populateMCQChoices(),
-            "minNumberSelections" : 1,
-            "maxNumberSelections": 2,
+            "minNumberSelections" : 0,
+            "maxNumberSelections": self.view.maxNumberOfSelectionsInput.text(),
             "resultFormat": "%",
             "weightingSetting": None,
             "weightingFactor": None,
@@ -144,7 +144,7 @@ class RankingByPreferenceQuestion(BaseQuestion):
             "image" : self.randint if self.randint is not None else None,
             "choices": self.populatePreferenceChoices(),
             "minNumberSelections": 1,
-			"maxNumberSelections": 2,
+			"maxNumberSelections": self.view.maxNumberOfSelectionsInput.text(),
             "correctAnswers": {"choices": ""},
             "correctAnswerExplanation": None
         }
@@ -187,8 +187,8 @@ class RankingByOrderQuestion(BaseQuestion):
             "uiType": "ordering",
             "image" : self.randint if self.randint is not None else None,
             "choices": self.populateRankingChoices(),
-            "minNumberSelections": 1,
-			"maxNumberSelections": 2,
+            "minNumberSelections": self.view.table.rowCount(),
+			"maxNumberSelections": self.view.table.rowCount(),
             
             "correctAnswers": ({"choices" : self.correctChoices}),
             "correctAnswerExplanation": self.view.answerExplanationInput.text()

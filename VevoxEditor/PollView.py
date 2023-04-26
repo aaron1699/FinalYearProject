@@ -51,6 +51,9 @@ class View(qtw.QWidget):
 		self.table.hideColumn(3)
 		self.table.setItem(0, 0, qtw.QTableWidgetItem("Name"))
 		self.table.horizontalHeader().setHidden(True)
+		self.table.horizontalHeader().setSectionResizeMode(0, qtw.QHeaderView.Stretch)
+		self.table.resizeColumnToContents(2)
+		self.table.resizeColumnToContents(4)
 
 		self.addRowButton = qtw.QPushButton("Add Row")
 		question_layout.addWidget(self.addRowButton, 2, 0)
@@ -61,13 +64,19 @@ class View(qtw.QWidget):
 		self.answerExplanationInput = qtw.QLineEdit()
 		question_layout.addWidget(self.answerExplanationInput, 4, 1, 1, 6)
 
+		self.maxNumberOfSelections = qtw.QLabel("Allowed Selections")
+		question_layout.addWidget(self.maxNumberOfSelections, 5, 0)
+
+		self.maxNumberOfSelectionsInput = qtw.QLineEdit()
+		question_layout.addWidget(self.maxNumberOfSelectionsInput, 5, 1, 1, 2)
+
 		#box for create question and opening image
 		actions_group = qtw.QGroupBox("Actions")
 		actions_layout = qtw.QVBoxLayout()
 		actions_group.setLayout(actions_layout)
 		layout.addWidget(actions_group, 6, 0, 2, 3)
 
-		self.createButton = qtw.QPushButton("Create")
+		self.createButton = qtw.QPushButton("Add To Poll")
 		actions_layout.addWidget(self.createButton)
 
 		self.imageButton = qtw.QPushButton("Add image")
@@ -104,10 +113,19 @@ class View(qtw.QWidget):
 		self.deleteQuestionButton = qtw.QPushButton("Delete Question")
 		question_bank_actions_layout.addWidget(self.deleteQuestionButton)
 
+		self.deleteAllButton = qtw.QPushButton("Clear Poll")
+		question_bank_actions_layout.addWidget(self.deleteAllButton)
+
+		additional_actions_group = qtw.QGroupBox("PDF Generator / Poll Importer")
+		additional_actions_group_layout = qtw.QHBoxLayout()
+		additional_actions_group.setLayout(additional_actions_group_layout)
+		layout.addWidget(additional_actions_group, 6, 6, 2, 3)
+
 		self.pdfgeneratorButton = qtw.QPushButton("Generate PDF")
-		layout.addWidget(self.pdfgeneratorButton, 6, 6, 1, 2)
+		additional_actions_group_layout.addWidget(self.pdfgeneratorButton)
 
 		self.importPollButton = qtw.QPushButton("Import Poll")
-		layout.addWidget(self.importPollButton, 6, 8, 1, 1)
+		additional_actions_group_layout.addWidget(self.importPollButton)
+
 
 		

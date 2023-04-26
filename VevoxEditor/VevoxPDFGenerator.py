@@ -1,4 +1,3 @@
-import sys 
 import json
 import zipfile
 import pdfkit
@@ -19,12 +18,12 @@ class PDFgenerator():
 
     def run(self):
         try:
-            filename, _ = qtw.QFileDialog.getOpenFileName(None, "Select a zip file", ".", "Zip files (*.zip)")
+            filepath, _ = qtw.QFileDialog.getOpenFileName(None, "Select a zip file", ".", "Zip files (*.zip)")
 
             path_wkhtmltopdf = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
             self.config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
 
-            zfile = zipfile.ZipFile(filename)
+            zfile = zipfile.ZipFile(filepath)
 
             for file in zfile.namelist():
                 zfile.extract(file)
@@ -33,6 +32,9 @@ class PDFgenerator():
             poll_file = zfile.open('polls.json')
 
             self.poll_data = json.load(poll_file)
+
+            self.title = os.path.basename(filepath)
+
         except Exception as e:
         # display an error message box with the error message
             msg_box = qtw.QMessageBox()
@@ -148,11 +150,24 @@ class PDFgenerator():
             if self.question['image'] != None:
                 html += f'<img src="{question_image}" style="max-width:{self.maxWidth}px;max-height:{self.maxHeight}px;"/>'
 
-            for choices in self.question['choices']:
-                html += f"<p>Rank: {choices['sequence'] + 1} <br> {choices['text']}</p>"
-                choices_image = self.findImage(choices)
-                if choices['image'] != None:
-                    html += f'<img src="{choices_image}" style="max-width:{self.maxWidth}px;max-height:{self.maxHeight}px;"/>'
+            if self.question['uiType'] == 'ranking':
+                for choices in self.question['choices']:
+                    
+                    html += f"<p>{choices['text']}</p>"
+
+            if self.question['uiType'] == 'ordering':
+                ranking = self.question["correctAnswer"]["choices"]
+                for choice, choices in zip(ranking, self.question['choices']):
+                    html += f"<p>Rank {choice['rank']}:</p>"
+                    html += f"<p>{choices['text']}</p>"
+                
+
+            
+                    
+                
+                    #choices_image = self.findImage(choices)
+                    #if choices['image'] != None:
+                    #    html += f'<img src="{choices_image}" style="max-width:{self.maxWidth}px;max-height:{self.maxHeight}px;"/>'
 
             return html
 
@@ -277,7 +292,8 @@ class PDFgenerator():
         if self.poll_data != None:
 
             html = ''
-     
+            html = f"<h1>{self.title}</h1>"
+
             for question_number, question in enumerate(self.poll_data):
 
                 if question['@type'] == "MultipleChoiceQuestion":
