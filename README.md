@@ -1,2 +1,1 @@
-# FinalYearProject
-Final branch is the final version
+# Vevox Poll Creator & PDF Generator
