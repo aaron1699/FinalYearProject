@@ -195,13 +195,9 @@ class PollController():
 		output_path = os.path.join(filename)
 
 		self.write_polls_to_file(self.polls)
-
 		self.create_zip_file(folder_path, json_path, output_path)
-
 		self.delete_files_in_folder(folder_path)
-
 		self.clear_data(self.polls, self.view.questionBank)
-
 		self.display_message_box("Poll Created!")
 
 

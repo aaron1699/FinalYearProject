@@ -129,7 +129,6 @@ class ViewHandler:
         self.view.imageButton.hide()
         
 
-
     def showhide(self, text):
         view_switcher = {
             'MultipleChoice': self.MCQView,
@@ -145,10 +144,7 @@ class ViewHandler:
 
         if text in view_switcher:
             view_switcher[text]()
-
-
-
-    
+ 
 
     def addRowMCQ(self):
         row = self.view.table.rowCount()
@@ -162,8 +158,7 @@ class ViewHandler:
         self.deleteAnswerButton = qtw.QPushButton("Delete")
         self.deleteAnswerButton.clicked.connect(self.deleteAnswer)
         self.view.table.setCellWidget(row,2,self.deleteAnswerButton)
-
-    
+  
 
     def addRowTXT(self):
         row = self.view.table.rowCount()
