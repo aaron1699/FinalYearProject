@@ -67,7 +67,7 @@ class PinOnImageWindow(QtWidgets.QWidget):
 
     def deleteButtonClicked(self):
         if self.items:
-            self.items.pop()  # remove most recently drawn circle from list
+            self.items.pop()  
             self.correctItems.pop()
             self.updateAndRedraw()
 

@@ -69,8 +69,8 @@ class PDFgenerator():
     # set max image height and width
         if self.poll_data != None:
             window = QWidget()
-            height = QInputDialog.getInt(window, "Image size", "Enter maximum image height:")
-            width = QInputDialog.getInt(window, "Image size", "Enter maximum image width:")
+            height = QInputDialog.getInt(window, "Image size", "Enter maximum image height (pixels):")
+            width = QInputDialog.getInt(window, "Image size", "Enter maximum image width (pixels):")
             self.maxWidth = width[0]
             self.maxHeight = height[0]
             window.show()
@@ -92,7 +92,7 @@ class PDFgenerator():
 
         image = cv2.imread(image_path)
 
-        # Iterate through the ovals and draw each one on the image
+        # iterate through the ovals and draw each one on the image
         for oval in ovals:
             x = int(oval["x"] * image.shape[1])
             y = int(oval["y"] * image.shape[0])
@@ -161,14 +161,6 @@ class PDFgenerator():
                     html += f"<p>Rank {choice['rank']}:</p>"
                     html += f"<p>{choices['text']}</p>"
                 
-
-            
-                    
-                
-                    #choices_image = self.findImage(choices)
-                    #if choices['image'] != None:
-                    #    html += f'<img src="{choices_image}" style="max-width:{self.maxWidth}px;max-height:{self.maxHeight}px;"/>'
-
             return html
 
     class ClickMapQuestion:
