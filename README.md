@@ -15,9 +15,9 @@ This application is built using Python and PyQT.
 
 To run this project, you will need to add the following environment variables:
 
-`pdfkit`
+[pdfkit](https://pdfkit.org/)
 
-`wkhtmltopdf`
+[wkhtmltopdf](https://wkhtmltopdf.org/)
 
 Tutorial: https://ourcodeworld.com/articles/read/240/how-to-edit-and-add-environment-variables-in-windows-for-easy-command-line-access
 
